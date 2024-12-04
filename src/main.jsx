@@ -11,6 +11,8 @@ import CreazioneGiornalista from './Pages/CreazioneGiornalista.jsx'
 import './index.css'
 import CreaArticolo from './Pages/CreaArticolo.jsx';
 import ArticlePage from './Pages/ArticlePage.jsx';
+import { AuthProvider } from './components/AuthContext.jsx';
+
 
 
 
@@ -47,6 +49,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>,
 )
