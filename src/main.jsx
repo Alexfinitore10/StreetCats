@@ -4,13 +4,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import App from './App.jsx'
 import LoginPage from './Pages/LoginPage.jsx'
 import MainPage from './Pages/MainPage.jsx';
 import RegisterPage from './Pages/RegisterPage.jsx'
 import CreazioneGiornalista from './Pages/CreazioneGiornalista.jsx'
 import './index.css'
 import CreaArticolo from './Pages/CreaArticolo.jsx';
+import ArticlePage from './Pages/ArticlePage.jsx';
 
 
 
@@ -38,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "/pubblica-articolo",
     element: <CreaArticolo />
+  },
+  {
+    path: "/articolo/:articleId",
+    element: <ArticlePage />
   }
 ]);
 

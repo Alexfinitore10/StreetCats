@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import typography from '@tailwindcss/typography';
+
 export default {
   content: [
     "./index.html",
@@ -8,7 +11,7 @@ export default {
     extend: {},
   },
   plugins: [
-    require('@tailwindcss/typography')
+    typography,
   ],
 }
 
