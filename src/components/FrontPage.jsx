@@ -7,8 +7,6 @@ function FrontPage() {
 
   const { isLoggedIn, login, logout } = useAuth();
 
-  const [showArticles, setShowArticles] = useState(false);
-
   const [articles, setArticles] = useState([
     {
       id: 1,
@@ -100,9 +98,6 @@ function FrontPage() {
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
-  ]);
-
-  const [otherArticles, setOtherArticles] = useState([
     {
       id: 11,
       image: 'https://picsum.photos/200/300',
@@ -122,8 +117,8 @@ function FrontPage() {
       tags: ['gatto', 'animali', 'pensionato']
     }
   ]);
-  
   const [farticles, fsetArticles] = useState(articles);
+  const [visibleArticles, setVisibleArticles] = useState(articles.slice(0, 10));
 
   const location = useLocation();
 
@@ -131,6 +126,17 @@ function FrontPage() {
 
 
 
+  const handleLoadMore = () => {
+  if (isLoggedIn) {
+    const currentLength = visibleArticles.length;
+    const nextArticles = articles.slice(currentLength, currentLength + 5);
+    setVisibleArticles([...visibleArticles, ...nextArticles]);
+  } else {
+    // Redirect to login if not logged in
+    alert('Devi effettuare il log in prima di vedere questo contenuto');
+    navigate('/login');
+  }
+};
 
 
   const handleTagClick = (tag) => {
@@ -148,38 +154,16 @@ function FrontPage() {
   
 
   useEffect(() => {
-    if (location.pathname === '/') {
-      fsetArticles(articles);
+    if (location.pathname === '/home') {
+      fsetArticles(articles.slice(0, 10));
     }
   }, [location.pathname]);
-
-  const handleLogoutclick = () => {
-    alert('Devi effettuare il log in prima di vedere questo contenuto');
-  };
-
-  const handleClickNotLogged = () => {
-    if(isLoggedIn)
-    {
-      setShowArticles(true);
-    }else
-    {
-      alert('Devi effettuare il log in prima di vedere questo contenuto');
-      navigate('/login');
-    }
-  };
-
-  useEffect(() => {
-    if (showArticles && isLoggedIn) {
-      fsetArticles((prevArticles) => [...prevArticles, ...otherArticles]);
-    }
-  }, [showArticles, isLoggedIn, otherArticles]);
-
 
   return (
     <div className="mx-auto flex flex-col items-center justify-center px-4">
       <h1 className="text-5xl font-bold mb-6">Benvenuto su PressPortal</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {articles.map((article) => (
+        {visibleArticles.map((article) => (
           <InteractiveCard
             key={article.id}
             articleId={article.id}
@@ -194,11 +178,16 @@ function FrontPage() {
           />
         ))}
       </div>
-      <div className="mt-6 mb-6">
-        <button onClick={handleClickNotLogged} className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200">
-        Carica Altro
-        </button>
-      </div>
+      {visibleArticles.length < articles.length && (
+        <div className="mt-6 mb-6">
+          <button 
+            onClick={handleLoadMore} 
+            className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200"
+          >
+            Carica Altro
+          </button>
+        </div>
+      )}
     </div>
   );
 }
