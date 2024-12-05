@@ -115,6 +115,51 @@ function FrontPage() {
       publishedDate: '01/01/2022',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un pensionato sconosciuto si è impegnato a cercare e salvare un gatto che era stato abbandonato. Il testo descrive le sue azioni e i suoi tentativi per ritrovare il gatto.',
       tags: ['gatto', 'animali', 'pensionato']
+    },
+    {
+      id: 13,
+      image: 'https://picsum.photos/200/300',
+      title: 'L\'Italia si aggiudica il mondiale del basket',
+      description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
+      publishedDate: '01/01/2022',
+      bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
+      tags: ['bruschetta', 'non ci credo']
+    },
+    {
+      id: 14,
+      image: 'https://picsum.photos/200/300',
+      title: 'L\'Italia si aggiudica il mondiale del basket',
+      description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
+      publishedDate: '01/01/2022',
+      bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
+      tags: ['bruschetta', 'non ci credo']
+    },
+    {
+      id: 15,
+      image: 'https://picsum.photos/200/300',
+      title: 'L\'Italia si aggiudica il mondiale del basket',
+      description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
+      publishedDate: '01/01/2022',
+      bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
+      tags: ['bruschetta', 'non ci credo']
+    },
+    {
+      id: 16,
+      image: 'https://picsum.photos/200/300',
+      title: 'L\'Italia si aggiudica il mondiale del basket',
+      description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
+      publishedDate: '01/01/2022',
+      bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
+      tags: ['bruschetta', 'non ci credo']
+    },
+    {
+      id: 17,
+      image: 'https://picsum.photos/200/300',
+      title: 'L\'Italia si aggiudica il mondiale del basket',
+      description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
+      publishedDate: '01/01/2022',
+      bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
+      tags: ['bruschetta', 'non ci credo']
     }
   ]);
   const [farticles, fsetArticles] = useState(articles);
