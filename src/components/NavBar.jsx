@@ -6,7 +6,7 @@ function Navbar(){
           <Link to='/' className=''>Logo</Link>
           <div className='p-5 space-x-4 '>
             <Link to='/home'>Home</Link>
-            <Link to='/about'>About</Link>
+            <Link to='/about' >About</Link>
             <Link to='/contact'>Contact</Link>
             <Link to='/creazione-utenza'>Creazione Utenza</Link>
             <Link to='/pubblica-articolo'>Crea articolo</Link>

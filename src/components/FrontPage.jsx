@@ -205,7 +205,7 @@ function FrontPage() {
   }, [location.pathname]);
 
   return (
-    <div className="mx-auto flex flex-col items-center justify-center px-4">
+    <div className="mx-auto flex flex-col items-center justify-center px-4 mb-8">
       <h1 className="text-5xl font-bold mb-6">Benvenuto su PressPortal</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleArticles.map((article) => (
