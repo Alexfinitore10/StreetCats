@@ -180,7 +180,7 @@ function FrontPage() {
     // Redirect to login if not logged in
     alert('Devi effettuare il log in prima di vedere questo contenuto');
     navigate('/login');
-  }arguments
+  }
   
 };
 
