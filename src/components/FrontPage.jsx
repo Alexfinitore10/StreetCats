@@ -14,7 +14,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -23,7 +23,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300?random=1',
       title: 'Il pensionato sconosciuto che ha salvato il gatto',
       description: 'Un uomo di mezza età si è impegnato a seguire un gatto che era stato abbandonato e si era perso in un quartiere periferico. Il gatto era sparito da diversi giorni e nessuno sapeva dove si trovasse.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un pensionato sconosciuto si è impegnato a cercare e salvare un gatto che era stato abbandonato. Il testo descrive le sue azioni e i suoi tentativi per ritrovare il gatto.',
       tags: ['gatto', 'animali', 'pensionato']
     },
@@ -32,7 +32,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -41,7 +41,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['basket', 'calcio', 'calcio mondiale']
     },
@@ -50,7 +50,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['basket', 'calcio', 'calcio mondiale']
     },
@@ -59,7 +59,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -68,7 +68,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -77,7 +77,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -86,7 +86,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2010-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -95,7 +95,7 @@ function FrontPage() {
       image: 'https://t4.ftcdn.net/jpg/00/38/34/37/360_F_38343743_lOX7Y1W41vXWX2PzHNI9tzFrwfY929Le.jpg',
       title: 'Il lupo che ha salvato il villaggio',
       description: 'Un lupo ha salvato un villaggio da una violenta tempesta di neve. La notte era buia e il vento era forte, e molti abitanti del villaggio stavano rischiando in pericolo.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un lupo si è impegnato a salvare un villaggio da una violenta tempesta di neve. Il testo descrive le sue azioni e i suoi tentativi per salvare il villaggio.',
       tags: ['lupo', 'animali', 'villaggio']
     },
@@ -104,7 +104,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2023-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -113,7 +113,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300?random=1',
       title: 'Il pensionato sconosciuto che ha salvato il gatto',
       description: 'Un uomo di mezza età si è impegnato a seguire un gatto che era stato abbandonato e si era perso in un quartiere periferico. Il gatto era sparito da diversi giorni e nessuno sapeva dove si trovasse.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come un pensionato sconosciuto si è impegnato a cercare e salvare un gatto che era stato abbandonato. Il testo descrive le sue azioni e i suoi tentativi per ritrovare il gatto.',
       tags: ['gatto', 'animali', 'pensionato']
     },
@@ -122,7 +122,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -131,7 +131,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -140,7 +140,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2015-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -149,7 +149,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2022-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     },
@@ -158,7 +158,7 @@ function FrontPage() {
       image: 'https://picsum.photos/200/300',
       title: 'L\'Italia si aggiudica il mondiale del basket',
       description: 'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio. I protagonisti sono stati il guardia tiratore Andrea Gigante e il centro Alessandro Chiti, che hanno guidato la squadra ad una finale sfida contro gli Stati Uniti, che però sono stati i campionati.',
-      publishedDate: '01/01/2022',
+      publishedDate: '2017-01-01',
       bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
       tags: ['bruschetta', 'non ci credo']
     }
@@ -170,15 +170,6 @@ function FrontPage() {
 
   const navigate = useNavigate();
 
-  const resetStateFunction = () => {
-    setSelectedTag(null);
-    setCurrentPage(1);
-    const sortedArticles = sortArticlesByDate(articles);
-    setArticles(sortedArticles);
-    setVisibleArticles(sortedArticles.slice(0, 10));
-    fsetArticles(sortedArticles);
-  };
-
   //tag logic
   const [selectedTag, setSelectedTag] = useState(null); // Nuovo stato per il tag selezionato
   const [currentPage, setCurrentPage] = useState(1);
@@ -187,6 +178,16 @@ function FrontPage() {
   const sortArticlesByDate = (articles) => {
     return articles.sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
   };
+
+  const resetStateFunction = () => {
+    setSelectedTag(null);
+    setCurrentPage(1);
+    const sortedArticles = sortArticlesByDate(articles); // AGGIUNTO: Ordina gli articoli all'inizio
+    setArticles(sortedArticles);
+    setVisibleArticles(sortedArticles.slice(0, 10));
+    fsetArticles(sortedArticles);
+  };
+
 
 
   //tag logic
@@ -212,25 +213,32 @@ function FrontPage() {
       const currentArticles = farticles.slice(indexOfFirstArticle, indexOfLastArticle);
       setVisibleArticles(currentArticles);
     } else {
-      setVisibleArticles(articles.slice(0, 10));
+      const indexOfLastArticle = currentPage * articlesPerPage;
+      const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+      const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
+      setVisibleArticles(currentArticles);
     }
   }, [selectedTag, farticles, currentPage, articlesPerPage, articles]);
 
 
 
-  const handleLoadMore = () => {
+  // Carica altri articoli quando l'utente clicca sul pulsante "Carica Altro"
+/* const handleLoadMore = () => {
+  // Verifica se l'utente è loggato
   if (isLoggedIn) {
+    // Calcola la lunghezza attuale degli articoli visibili
     const currentLength = visibleArticles.length;
+    // Calcola gli articoli successivi da caricare
     const nextArticles = articles.slice(currentLength, currentLength + 5);
+    // Aggiunge gli articoli successivi agli articoli visibili
     setVisibleArticles([...visibleArticles, ...nextArticles]);
   } else {
-    // Redirect to login if not logged in
+    // Se l'utente non è loggato, mostra un messaggio di alert e reindirizza alla pagina di login
     alert('Devi effettuare il log in prima di vedere questo contenuto');
     navigate('/login');
   }
+}; */
   
-};
-
 
   const handleTagClick = (tag) => {
     console.log(`Clicked on tag: ${tag}`);
@@ -248,6 +256,12 @@ function FrontPage() {
   const handleCardClick = (article) => {
     navigate(`/articolo/${article.id}`, { state: article });
   };
+
+  useEffect(() => {
+    if (location.pathname === '/home') {
+      resetStateFunction();
+    }
+  }, [location.pathname, articles]);
   
 
   
@@ -270,18 +284,7 @@ function FrontPage() {
           />
         ))}
       </div>
-      {!selectedTag && visibleArticles.length < articles.length && (
-        <div className="mt-6 mb-6">
-          <button 
-            onClick={handleLoadMore} 
-            className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200"
-          >
-            Carica Altro
-          </button>
-        </div>
-      )}
-
-      {selectedTag && totalPages > 1 && (
+      {totalPages > 1 && (
         <div className="mt-6 mb-6">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -303,5 +306,4 @@ function FrontPage() {
     </div>
   );
 }
-
 export default FrontPage;
