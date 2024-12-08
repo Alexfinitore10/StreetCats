@@ -8,7 +8,11 @@ function FrontPage() {
 
   const { isLoggedIn, login, logout } = useAuth();
 
-  const [articles, setArticles] = useState([
+  const [articles, setArticles] = useState([]);
+
+  
+
+  const [data, setData] = useState([
     {
       id: 1,
       image: 'https://picsum.photos/200/300',
@@ -221,6 +225,12 @@ function FrontPage() {
   }, [selectedTag, farticles, currentPage, articlesPerPage, articles]);
 
 
+  //Backend fetch
+  useEffect(() => {
+    fetch('http://localhost:3001/articles')
+      .then(response => response.json())
+      .then(data => setArticles(data));
+  }, []);
 
   // Carica altri articoli quando l'utente clicca sul pulsante "Carica Altro"
 /* const handleLoadMore = () => {
