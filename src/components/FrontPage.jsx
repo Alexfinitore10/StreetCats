@@ -168,11 +168,33 @@ function FrontPage() {
     }
   ]);
   const [farticles, fsetArticles] = useState(articles);
-  const [visibleArticles, setVisibleArticles] = useState(articles.slice(0, 10));
+  
 
   const location = useLocation();
 
   const navigate = useNavigate();
+
+  //Backend fetch
+  useEffect(() => {
+    fetch('http://localhost:3001/articles')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        console.log('Articles:', articles)
+        console.log('VisibleArticles:', visibleArticles)
+        return response.json();
+      })
+      .then(data => {
+        console.log(data); // Aggiungi questa riga per vedere i dati ricevuti
+        setArticles(data);
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  }, []);
+
+  const [visibleArticles, setVisibleArticles] = useState([]);
 
   //tag logic
   const [selectedTag, setSelectedTag] = useState(null); // Nuovo stato per il tag selezionato
@@ -225,12 +247,7 @@ function FrontPage() {
   }, [selectedTag, farticles, currentPage, articlesPerPage, articles]);
 
 
-  //Backend fetch
-  useEffect(() => {
-    fetch('http://localhost:3001/articles')
-      .then(response => response.json())
-      .then(data => setArticles(data));
-  }, []);
+  
 
   // Carica altri articoli quando l'utente clicca sul pulsante "Carica Altro"
 /* const handleLoadMore = () => {
