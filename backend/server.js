@@ -12,15 +12,26 @@ const app = express();
 
 app.use(cors());
 
+//Read all Articles From DB
+session.executeRead(async (tx) => {
+  try {
+    const res = await tx.run('');
+    console.log(res.records[0].get(''));
+  } catch (error) {
+    console.log(error);
+  }
+})
 
-session.executeRead((tx) => {
-  return tx.run('MATCH (n) RETURN count(n) AS count')
-    .then((res) => {
-      console.log(res.records[0].get('count'))
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+//Upload a new Article
+session.executeWrite(async (tx) => {
+  try {
+    const res = await tx.run('CREATE (a:Article {id:\'1\', title:\'Spyro 3 Annunciato!\', image:\'https://picsum.photos/200/300\', description: \'Una squadra di giocatori italiani ha vinto il mondiale di basket, dopo un\'annata di lavoro e sacrificio.\', publishedDate: \'2022-01-01\', bodyPreview: \'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata\', tags: [\'bruschetta\', \'non ci credo\']  })');
+    await tx.commit();
+
+  } catch (error) {
+    console.log(error);
+    await tx.rollback();
+  }
 })
 
 
