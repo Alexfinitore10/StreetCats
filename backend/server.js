@@ -5,7 +5,7 @@ const cors = require("cors");
 const PORT = 3001;
 //For DB 
 const neo4j = require("neo4j-driver");
-const driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'letmein')) 
+const driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'pressportaldb')) 
 const session = driver.session()
 
 const app = express();
