@@ -13,23 +13,24 @@ const app = express();
 app.use(cors());
 
 //Read all Articles From DB
-/* session.executeRead(async (tx) => {
+session.executeRead(async (tx) => {
   try {
     console.log("Retrieving all articles from Database...\n");
     const res = await tx.run('MATCH (a:Article) RETURN a');
     console.log(res.records[0].get('a'));
-    const articles = res.records.map(record => record.get('a').properties);
-    console.log(articles);
   } catch (error) {
     console.log(error);
   }
-}) */
+})
 
-//Upload a new Article
-session.beginTransaction()
-  .then((tx) => {
-    return Promise.all(articles.map((article) => {
-      return tx.run(`
+//Insert Article
+
+//Upload all Articles
+/* session.beginTransaction()
+  .then(async (tx) => {
+    try {
+      await Promise.all(articles.map((article) => {
+        return tx.run(`
         CREATE (a:Article {
           id: $id,
           image: $image,
@@ -40,32 +41,29 @@ session.beginTransaction()
           tags: $tags
         })
       `, {
-        id: article.id,
-        image: article.image,
-        title: article.title,
-        description: article.description,
-        publishedDate: article.publishedDate,
-        bodyPreview: article.bodyPreview,
-        tags: article.tags
-      });
-    }))
-    .then(() => {
-      return tx.commit();
-    })
-    .catch((error) => {
-      return tx.rollback().then(() => {
-        throw error;
-      });
-    });
+          id: article.id,
+          image: article.image,
+          title: article.title,
+          description: article.description,
+          publishedDate: article.publishedDate,
+          bodyPreview: article.bodyPreview,
+          tags: article.tags
+        });
+      }));
+      return await tx.commit();
+    } catch (error) {
+      await tx.rollback();
+      throw error;
+    }
   })
   .then(() => {
     console.log('Tutti gli articoli sono stati inseriti correttamente.');
   })
   .catch((error) => {
     console.log('Si è verificato un errore:', error);
-  });
+  }); */
 
-const articles = [
+/* const articles = [
   {
     id: 1,
     image: 'https://picsum.photos/200/300',
@@ -219,7 +217,7 @@ const articles = [
     bodyPreview: 'Questo è un testo di esempio di un articolo, che parla di come l\'Italia si è aggiudicata il campionato mondiale di basket. Il testo è molto dettagliato e descrive le azioni dei giocatori e il loro ruolo nel successo della squadra.',
     tags: ['bruschetta', 'non ci credo']
   }
-]
+] */
 
 /* console.log(articles.json()); */
 
