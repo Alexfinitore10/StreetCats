@@ -19,7 +19,7 @@ function FrontPage() {
 
   //Backend fetch
   useEffect(() => {
-    fetch('http://localhost:3001/articles')
+    fetch('http://localhost:3001/api/articles')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
