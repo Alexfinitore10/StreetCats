@@ -1,5 +1,6 @@
 //Backend ServerJS
 //For Rest Operations and Server Mantenance
+const bcrypt = require("bcrypt");
 const express = require("express");
 const cors = require("cors");
 const PORT = 3001;
@@ -16,6 +17,12 @@ app.use(express.json());
 
 app.use(cors());
 
+//Hash Function
+function hashString(str) {
+  const saltRounds = 10;
+  return bcrypt.hashSync(str, saltRounds);
+}
+
 
 
 //TODO: Insert Article
@@ -27,16 +34,33 @@ app.post('/api/login', async (req, res) => {
   const password = req.body.password;
   console.log(`Email: ${email}, Password: ${password}`);
 
+  
+  const passwordHash = hashString(password);
+  const emailHash = hashString(email);
+
+  console.log(`Password: ${password}, Hashed Password: ${passwordHash},email: ${email}, Hashed Email: ${emailHash}`);
+
   const session = driver.session(); // Crea una sessione all'interno della route
 
   try {
     const result = await session.executeRead(tx =>
-      tx.run('MATCH (u:User) WHERE u.email = $email AND u.password = $password RETURN u', { email, password })
+      tx.run('MATCH (g:Giornalista) WHERE g.email = $email RETURN g', { email })
     );
 
-    if (result.records.length > 0) {
+    console.log("arrivato?")
+
+    if (result.records.length === 0) {
+      console.log('Login failed, email non trovata nel database');
+      return res.status(401).json({ success: false, message: 'Email o password non validi' });
+    }
+    const storedHash = result.records[0].get('g').properties.passwd;
+    const match = await bcrypt.compare(password, storedHash);
+
+    if (match) {
+      console.log('Login successful');
       res.json({ success: true });
     } else {
+      console.log('Login failed, password non corretta');
       res.status(401).json({ success: false, message: 'Email o password non validi' });
     }
   } catch (error) {
@@ -48,7 +72,51 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Funzione per creare un giornalista
+async function createGiornalista(email, password, nome) {
+  const session = driver.session();
 
+  try {
+    const passwordHash = hashString(password);
+
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        'CREATE (g:Giornalista {email: $email, passwd: $password, nome: $nome, articoli_creati: 0}) RETURN g',
+        { email, password: passwordHash, nome }
+      )
+    );
+
+    if (result.records.length === 0) {
+      throw new Error('Errore durante la creazione del giornalista');
+    }
+
+    const giornalista = result.records[0].get('g').properties;
+    return giornalista;
+  } catch (error) {
+    console.error('Errore durante la creazione del giornalista:', error);
+    throw error;
+  } finally {
+    session.close();
+  }
+}
+
+// Endpoint per creare un giornalista
+app.post('/api/create_giornalista', async (req, res) => {
+  const { email, password, nome } = req.body;
+
+  if (!email || !password || !nome) {
+    return res.status(400).json({ success: false, message: 'Email, password e nome sono obbligatori' });
+  }
+
+  try {
+    const giornalista = await createGiornalista(email, password, nome);
+    res.status(201).json({ success: true, giornalista });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Errore interno del server' });
+  }
+});
+
+//Get All Articles
 app.get("/api/articles", async (req, res) => {
   try {
     console.log("Retrieving all articles from Database...\n");
