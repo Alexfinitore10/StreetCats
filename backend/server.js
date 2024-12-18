@@ -32,6 +32,7 @@ function uploadImageToImgBB(image) {
       image: image, // image selected from the file input
     })
       .then((data) => {
+        console.log(data);
         resolve(data.image.url);
       })
       .catch((error) => {
@@ -55,35 +56,37 @@ function hashUserCredentials(userPassword) {
 }
 
 
-//TODO: Insert Article
 //Insert Article
-app.post('/api/insert_article', async (req, res) => {
-  const session = driver.session()
-  //image takeCarer
-  uploadImageToImgBB(req.body.image)
-    .then((url) => {
-      const imageUrl= url;
-      console.log(url);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  const result = await session.run(
-    "CREATE (a: Article {id: $id, title: $title, description: $description, publishedDate: $publishedDate, bodyPreview: $bodyPreview, image: $image, tags: $tags}) RETURN a",
-    {
-      id: req.body.id,
-      title: req.body.title,
-      description: req.body.description,
-      publishedDate: req.body.publishedDate,
-      bodyPreview: req.body.bodyPreview,
-      image: imageUrl,
-      tags: req.body.tags || [],
-    }
-  )
-  const singleRecord = result.records[0]
-  const node = singleRecord.get(0)
-  res.send(node.properties)
-})
+app.post('/api/article', async (req, res) => {
+  const session = driver.session();
+  console.log(req.body);
+
+  try {
+    const imageUrl = await uploadImageToImgBB(req.body.image);
+    console.log(imageUrl);
+
+    const result = await session.run(
+      "CREATE (a: Article {title: $title, description: $description, publishedDate: $publishedDate, bodyPreview: $bodyPreview, image: $image, tags: $tags}) RETURN a",
+      {
+        title: req.body.title,
+        description: req.body.description,
+        publishedDate: req.body.publishedDate,
+        bodyPreview: req.body.bodyPreview,
+        image: imageUrl,
+        tags: req.body.tags ? req.body.tags.split(',').map(tag => tag.trim()) : [],
+      }
+    );
+
+    const singleRecord = result.records[0];
+    const node = singleRecord.get(0);
+    res.send(node.properties);
+  } catch (error) {
+    console.error('Errore durante la creazione dell\'articolo:', error);
+    res.status(500).json({ success: false, message: 'Errore interno del server' });
+  } finally {
+    session.close();
+  }
+});
 
 //Login Control
 app.post('/api/login', async (req, res) => {

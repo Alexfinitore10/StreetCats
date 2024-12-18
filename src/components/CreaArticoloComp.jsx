@@ -5,17 +5,62 @@ function CreaArticoloComp() {
   const [titolo, setTitolo] = useState('');
   const [contenuto, setContenuto] = useState('');
   const [immagineCopertina, setImmagineCopertina] = useState(null);
-  const [categoria, setCategoria] = useState('');
+  const [description, setDescription] = useState('');
+  const [bodyPreview, setBodyPreview] = useState('');
+  const [tags, setTags] = useState('');
+  const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isPreview, setIsPreview] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Dati articolo:', { titolo, contenuto, immagineCopertina, categoria });
-    // Qui implementerai la logica per inviare i dati al backend
-    setTitolo('');
-    setContenuto('');
-    setImmagineCopertina(null);
-    setCategoria('');
+
+    // Preparazione dei dati da inviare al backend
+    const formData = new FormData();
+    formData.append('title', titolo);
+    formData.append('description', description);
+    formData.append('publishedDate', publishedDate);
+    formData.append('bodyPreview', bodyPreview);
+    formData.append('tags', tags);
+    if (immagineCopertina) {
+      formData.append('image', immagineCopertina);
+    }
+
+    console.log('Dati articolo:', {
+      title: titolo,
+      body: contenuto,
+      description: description,
+      bodyPreview: bodyPreview,
+      publishedDate: publishedDate,
+      tags: tags.split(',').map(tag => tag.trim()),
+      image: immagineCopertina ? immagineCopertina.name : null,
+    });
+
+    // Esempio di invio dei dati al backend
+    try {
+      const response = await fetch('http://localhost:3001/api/article', {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('Response:', response);
+
+      if (response.ok) {
+        alert('Articolo creato con successo!');
+        // Resetta i campi
+        setTitolo('');
+        setContenuto('');
+        setImmagineCopertina(null);
+        setDescription('');
+        setBodyPreview('');
+        setTags('');
+        setPublishedDate(new Date().toISOString().split(',')[0]);
+      } else {
+        alert('Errore nella creazione dell\'articolo');
+      }
+    } catch (error) {
+      console.error('Errore durante l\'invio dei dati:', error);
+      alert('Errore durante l\'invio dei dati');
+    }
   };
 
   return (
@@ -34,7 +79,29 @@ function CreaArticoloComp() {
           />
         </div>
         <div>
-          <label htmlFor="contenuto" className="block text-sm font-medium text-gray-700" >Contenuto (Con supporto a Markdown)</label>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrizione</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows="3"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            required
+          ></textarea>
+        </div>
+        <div>
+          <label htmlFor="bodyPreview" className="block text-sm font-medium text-gray-700">Anteprima del Contenuto</label>
+          <textarea
+            id="bodyPreview"
+            value={bodyPreview}
+            onChange={(e) => setBodyPreview(e.target.value)}
+            rows="3"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            required
+          ></textarea>
+        </div>
+        <div>
+          <label htmlFor="contenuto" className="block text-sm font-medium text-gray-700">Contenuto (Con supporto a Markdown)</label>
           <div className="flex space-x-2">
             <button
               type="button"
@@ -70,25 +137,31 @@ function CreaArticoloComp() {
           />
         </div>
         <div>
-          <label htmlFor="categoria" className="block text-sm font-medium text-gray-700">Categoria</label>
-          <select
-            id="categoria"
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
+          <label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700">Data di Pubblicazione</label>
+          <input
+            type="date"
+            id="publishedDate"
+            value={publishedDate}
+            onChange={(e) => setPublishedDate(e.target.value)}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             required
-          >
-            <option value="">Seleziona una categoria</option>
-            <option value="tecnologia">Tecnologia</option>
-            <option value="lifestyle">Lifestyle</option>
-            <option value="viaggi">Viaggi</option>
-            <option value="cibo">Cibo</option>
-          </select>
+          />
         </div>
         <div>
-        <button type="submit" className="w-full block bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-          Crea articolo
-        </button>
+          <label htmlFor="tags" className="block text-sm font-medium text-gray-700">Tags (separati da virgola)</label>
+          <input
+            type="text"
+            id="tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            required
+          />
+        </div>
+        <div>
+          <button type="submit" className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            Crea articolo
+          </button>
         </div>
       </form>
     </div>
