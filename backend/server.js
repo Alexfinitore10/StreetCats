@@ -11,7 +11,8 @@ const PORT = 3001;
 const neo4j = require("neo4j-driver");
 const driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'pressportaldb')) 
 const session = driver.session()
-const {imgbbUpload} = require("imgbb-image-uploader");
+const axios = require("axios");
+const fs = require("fs").promises;
 
 const app = express();
 
@@ -25,20 +26,32 @@ const jwt = require("jsonwebtoken");
 const secretKey = '502f90aeb311ffb55b0e7eed4876bc615ee03c8373f2a6f4a902c2a82dc4b486d312f1dd5eb7ae38d1a66cd759ada5f7601eb443be9d24c8c196d6463435b62bc86e3d8fc9ef3f8fe1bfe4e23f2f08790f6e234baf1771ef814a54428feb95b5a7a10ca31e5d6ef7e0dd96c06aa6a58313f762c57ff69c00245e40ffaef4db942cbd54c7444e7eed3f2ceaa53412583a6276c28778eb908b439a4b21ff5d60fbfbfa9441d63c6a7f00205d5af25e96a679373d63a1deb4271585da640422d4a4fb835b99eea585c33bcd8919924f52d0b401395f3dfba8465eec12d0d5550ef78147c412e652070f33472df744872ce0c948b387a5b891c9202838f9e5d2be76';
 
 //Image Upload
-function uploadImageToImgBB(image) {
-  return new Promise((resolve, reject) => {
-    imgbbUpload({
-      key: "325abbfd3365b40562e88dae9c1a97ad", // your imgbb api key
-      image: image, // image selected from the file input
-    })
-      .then((data) => {
-        console.log(data);
-        resolve(data.image.url);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+async function uploadToImgur(imagePath) {
+  const clientId = '5dfaed2dd75834f'; // Sostituisci con il tuo Client ID di Imgur
+
+  try {
+      // Leggi il file come base64
+      const image = await fs.readFile(imagePath, { encoding: 'base64' });
+
+      // Invia la richiesta a Imgur
+      const response = await axios.post(
+          'https://api.imgur.com/3/upload',
+          { image },
+          {
+              headers: {
+                  Authorization: `Client-ID ${clientId}`,
+              },
+          }
+      );
+
+      // Ottieni il link pubblico dell'immagine
+      const imageUrl = response.data.data.link;
+      console.log('Immagine caricata con successo:', imageUrl);
+      return imageUrl;
+  } catch (error) {
+      console.error('Errore durante il caricamento su Imgur:', error.message);
+      throw error;
+  }
 }
 
 //Hash Function
@@ -62,8 +75,16 @@ app.post('/api/article', async (req, res) => {
   console.log(req.body);
 
   try {
-    const imageUrl = await uploadImageToImgBB(req.body.image);
+    //const image = req.body.image;
+    const image = __dirname + "/Pigs.png";
+    const imageUrl = await uploadToImgur(image).then((imageUrl) => {
+      console.log('Link dell\'immagine:', imageUrl);
+    });
+
+    
+    
     console.log(imageUrl);
+    /* console.log(imageUrl);
 
     const result = await session.run(
       "CREATE (a: Article {title: $title, description: $description, publishedDate: $publishedDate, bodyPreview: $bodyPreview, image: $image, tags: $tags}) RETURN a",
@@ -79,7 +100,7 @@ app.post('/api/article', async (req, res) => {
 
     const singleRecord = result.records[0];
     const node = singleRecord.get(0);
-    res.send(node.properties);
+    res.send(node.properties); */
   } catch (error) {
     console.error('Errore durante la creazione dell\'articolo:', error);
     res.status(500).json({ success: false, message: 'Errore interno del server' });
