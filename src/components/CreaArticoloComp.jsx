@@ -20,19 +20,21 @@ function CreaArticoloComp() {
     formData.append('description', description);
     formData.append('publishedDate', publishedDate);
     formData.append('bodyPreview', bodyPreview);
-    formData.append('tags', tags);
     if (immagineCopertina) {
       formData.append('image', immagineCopertina);
     }
+    formData.append('tags', JSON.stringify(tags.split(',').map(tag => tag.trim())));
+
+    
 
     console.log('Dati articolo:', {
       title: titolo,
       body: contenuto,
       description: description,
       bodyPreview: bodyPreview,
-      publishedDate: publishedDate,
-      tags: tags.split(',').map(tag => tag.trim()),
       image: immagineCopertina ? immagineCopertina.name : null,
+      publishedDate: publishedDate,
+      tags: tags ? tags.split(',').map(tag => tag.trim()) : []
     });
 
     // Esempio di invio dei dati al backend

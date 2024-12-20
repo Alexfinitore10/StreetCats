@@ -3,6 +3,10 @@
 const bcrypt = require("bcrypt");
 const express = require("express");
 const cors = require("cors");
+const multer = require('multer');
+const path = require('path');
+const upload = multer({ dest: 'uploads/' });
+
 
 const PORT = 3001;
 
@@ -19,6 +23,8 @@ const app = express();
 app.use(express.json());
 
 app.use(cors());
+
+app.use(express.urlencoded({ extended: true }));
 
 //JWT
 const jwt = require("jsonwebtoken");
@@ -69,22 +75,79 @@ function hashUserCredentials(userPassword) {
 }
 
 
+app.post('/api/article', upload.single('image'), async (req, res) => {
+  try {
+      const { title, description, publishedDate, bodyPreview, tags } = req.body;
+      console.log('Dati ricevuti:', req.body);
+      //console.log(`Titolo: ${title}, Descrizione: ${description}, Data di pubblicazione: ${publishedDate}, Anteprima: ${bodyPreview}, Tags: ${tags || 'Nessun tag'}`);
+
+      const filePath = req.file.path; // Percorso del file salvato
+      console.log('File ricevuto e salvato temporaneamente in:', filePath);
+
+      // Invia il file a Imgur
+      const imageUrl = await uploadToImgur(filePath);
+
+      const result = await session.executeWrite(async (tx) => {
+        // Step 1: Ottieni il massimo ID
+        const maxIdResult = await tx.run(
+            "MATCH (a:Article) RETURN COALESCE(MAX(a.id), 0) AS maxId"
+        );
+        const maxId = maxIdResult.records[0].get("maxId");
+
+        // Step 2: Crea il nuovo articolo con l'ID incrementato
+        return await tx.run(
+            `
+            CREATE (a:Article {
+                id: $id,
+                title: $title,
+                description: $description,
+                publishedDate: $publishedDate,
+                bodyPreview: $bodyPreview,
+                image: $image,
+                tags: $tags
+            })
+            RETURN a
+            `,
+            {
+                id: maxId + 1,
+                title: title,
+                description: description,
+                publishedDate: publishedDate,
+                bodyPreview: bodyPreview,
+                image: imageUrl,
+                tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            }
+        );
+    });
+
+      if (result.records.length === 0) {
+        throw new Error('Errore durante la creazione dell\'articolo');
+      }else{
+        console.log('Articolo creato con successo');
+      }
+
+
+      res.status(200).json({ message: 'Articolo creato con successo', imageUrl });
+      await fs.unlink(filePath);//elimina il file temporaneo
+      console.log('File eliminato');
+  } catch (error) {
+      console.error('Errore:', error);
+      res.status(500).json({ message: 'Errore durante la creazione dell\'articolo' });
+  }
+});
+
 //Insert Article
-app.post('/api/article', async (req, res) => {
+/* app.post('/api/article', async (req, res) => {
   const session = driver.session();
   console.log(req.body);
 
   try {
-    //const image = req.body.image;
-    const image = __dirname + "/Pigs.png";
+    const image = req.body.image;
+    //const image = __dirname + "/Pigs.png";
+    console.log("Immagine: ", req.body.image);
     const imageUrl = await uploadToImgur(image).then((imageUrl) => {
       console.log('Link dell\'immagine:', imageUrl);
     });
-
-    
-    
-    console.log(imageUrl);
-    /* console.log(imageUrl);
 
     const result = await session.run(
       "CREATE (a: Article {title: $title, description: $description, publishedDate: $publishedDate, bodyPreview: $bodyPreview, image: $image, tags: $tags}) RETURN a",
@@ -100,14 +163,14 @@ app.post('/api/article', async (req, res) => {
 
     const singleRecord = result.records[0];
     const node = singleRecord.get(0);
-    res.send(node.properties); */
+    res.send(node.properties);
   } catch (error) {
     console.error('Errore durante la creazione dell\'articolo:', error);
     res.status(500).json({ success: false, message: 'Errore interno del server' });
   } finally {
     session.close();
   }
-});
+}); */
 
 //Login Control
 app.post('/api/login', async (req, res) => {
