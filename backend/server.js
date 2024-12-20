@@ -76,12 +76,13 @@ function hashUserCredentials(userPassword) {
 
 
 app.post('/api/article', upload.single('image'), async (req, res) => {
+  const filePath = req.file.path; // Percorso del file salvato temporaneamente
   try {
-      const { title, description, publishedDate, bodyPreview, tags } = req.body;
+      const { title, description, publishedDate, contenuto, tags } = req.body;
       console.log('Dati ricevuti:', req.body);
       //console.log(`Titolo: ${title}, Descrizione: ${description}, Data di pubblicazione: ${publishedDate}, Anteprima: ${bodyPreview}, Tags: ${tags || 'Nessun tag'}`);
 
-      const filePath = req.file.path; // Percorso del file salvato
+      
       console.log('File ricevuto e salvato temporaneamente in:', filePath);
 
       // Invia il file a Imgur
@@ -102,7 +103,7 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
                 title: $title,
                 description: $description,
                 publishedDate: $publishedDate,
-                bodyPreview: $bodyPreview,
+                contenuto: $contenuto,
                 image: $image,
                 tags: $tags
             })
@@ -113,7 +114,7 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
                 title: title,
                 description: description,
                 publishedDate: publishedDate,
-                bodyPreview: bodyPreview,
+                contenuto: contenuto,
                 image: imageUrl,
                 tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
             }
@@ -133,6 +134,7 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
   } catch (error) {
       console.error('Errore:', error);
       res.status(500).json({ message: 'Errore durante la creazione dell\'articolo' });
+      await fs.unlink(filePath);
   }
 });
 

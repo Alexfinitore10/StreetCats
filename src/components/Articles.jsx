@@ -7,7 +7,7 @@ const InteractiveCard = ({
   title,
   description,
   publishedDate,
-  bodyPreview,
+  contenuto,
   tags = [],
   onTagClick,
   onCardClick, // Nuova prop per il click sull'immagine

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 function ArticlePage() {
   const {articleId} = useParams();
@@ -20,14 +21,18 @@ function ArticlePage() {
         alt={article.title}
         className="w-full max-w-3xl mx-auto mb-6 rounded-lg shadow-md"
       />
+      
+      {/* Renderizzazione del Markdown dopo l'immagine */}
+      <div className="prose lg:prose-lg my-6">
+        <ReactMarkdown>{article.contenuto}</ReactMarkdown>  {/* Corpo dell'articolo in Markdown */}
+      </div>
+      
       <p className="text-gray-700 text-lg">{article.description}</p>
       <div className="text-gray-500 text-sm my-4">
         <p>Pubblicato il: {article.publishedDate}</p>
         {article.lastEditDate && <p>Ultima modifica: {article.lastEditDate}</p>}
       </div>
-      <div className="prose lg:prose-lg">
-        <p>{article.body}</p>
-      </div>
+      
       <div className="flex flex-wrap gap-2 mt-4">
         {article.tags.map((tag, index) => (
           <span
