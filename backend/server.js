@@ -116,7 +116,7 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
                 publishedDate: publishedDate,
                 contenuto: contenuto,
                 image: imageUrl,
-                tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+                tags: tags ,
             }
         );
     });

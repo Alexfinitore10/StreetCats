@@ -6,7 +6,6 @@ function CreaArticoloComp() {
   const [contenuto, setContenuto] = useState('');
   const [immagineCopertina, setImmagineCopertina] = useState(null);
   const [description, setDescription] = useState('');
-  const [bodyPreview, setBodyPreview] = useState('');
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isPreview, setIsPreview] = useState(false);
@@ -23,7 +22,8 @@ function CreaArticoloComp() {
     if (immagineCopertina) {
       formData.append('image', immagineCopertina);
     }
-    formData.append('tags', JSON.stringify(tags.split(',').map(tag => tag.trim())));
+    formData.append('tags', tags.split(','));
+    
 
     
 
@@ -33,7 +33,7 @@ function CreaArticoloComp() {
       contenuto: contenuto,
       image: immagineCopertina ? immagineCopertina.name : null,
       publishedDate: publishedDate,
-      tags: tags ? tags.split(',').map(tag => tag.trim()) : []
+      tags: tags
     });
 
     // Esempio di invio dei dati al backend
