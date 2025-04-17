@@ -61,7 +61,12 @@ PressPortal/
    ```bash
    npm install
    ```
+3. **Configura le variabili d'ambiente**
    
+   Copia il file .env.example e rinominalo in .env. Poi, riempi i valori richiesti:
+   ```bash
+   cp .env.example .env
+   ```
 ## Esecuzione
 1. **Avvia l'applicazione:**
    ```bash
