@@ -1,45 +1,113 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 function RegisterForm(){
+
+    const [nome, setNome] = useState("");
+    const [cognome, setCognome] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+    
+        const payload = { 
+          nome, 
+          email, 
+          password 
+        };
+
+        try {
+            const res = await fetch("http://localhost:3001/api/create_giornalista", {
+              method: "POST",
+              credentials: "include",      // abilita cookie HttpOnly (se li imposti lato server)
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+      
+            const data = await res.json();
+      
+            if (!data.success) {
+              setError(data.message || "Registrazione fallita");
+              return;
+            }
+            navigate("/login");
+        } catch (error) {
+            console.error("Error during registration:", error);
+            setError("Errore durante la registrazione");
+        }
+    };
+
+    
     return(
         <>
-        <div className="bg-slate-200 bg-gradient-to-r to-transparent flex-col justify-evenly rounded-xl ">
-            <div>
-            Registrazione
-            </div>
-            <div className="p-10 bg-[#93c0f7]  flex flex-col">
-            <div>
-                Nome
-            </div>
-            <div >
-                <input className="rounded-sm" type="text" />
-            </div>
-            <div>
-                Cognome
-            </div>
-            <div >
-                <input className="rounded-sm" type="text" />
-            </div>
-            <div>
-                Email
-            </div>
-            <div >
-                <input className="rounded-sm" type="text" />
-            </div>
-            <div>
-                Password
-            </div>
-            <div >
-                <input className="rounded-sm" type="password" />
-            </div>
-            </div>
-            <div className=" bg-slate-100 rounded-lg ">
-            <button type="submit" className="hover:bg-slate-500 hover:text-slate-100">Registrati</button>
-            </div>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4 bg-slate-200 p-6 rounded-xl">
+        <h2 className="text-xl font-semibold">Registrazione</h2>
+
+        {error && <div className="text-red-600">{error}</div>}
+
         <div>
-            <p>Hai già un account? Clicca <Link className="text-red-700" to="/login"> qui</Link> per effettuare il login</p>
+          <label>Nome</label>
+          <input
+            type="text"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className="w-full rounded-sm p-1"
+            required
+          />
         </div>
-        </>
+
+        <div>
+          <label>Cognome</label>
+          <input
+            type="text"
+            value={cognome}
+            onChange={(e) => setCognome(e.target.value)}
+            className="w-full rounded-sm p-1"
+          />
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-sm p-1"
+            required
+          />
+        </div>
+
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-sm p-1"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Registrati
+        </button>
+      </form>
+
+      <p className="mt-4 text-center">
+        Hai già un account?{" "}
+        <Link className="text-red-700" to="/login">
+          Effettua il login
+        </Link>
+      </p>
+    </>
     );
 }
 

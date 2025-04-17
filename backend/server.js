@@ -24,7 +24,10 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.LOCALFRONTENDSERVER_URL,
+  credentials: true, 
+}));
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -90,6 +93,20 @@ function authenticateToken(req, res, next)
     next();
   });
 }
+
+function generateToken(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+}
+
+
+//Hash Password
+async function hashPassword(password) {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  }
+
+
+
 
 
 
@@ -169,9 +186,6 @@ app.post('/api/login', async (req, res) => {
   const password = req.body.password;
   console.log(`Email: ${email}, Password: ${password}`);
 
-  
-  hashUserCredentials(password);
-
 
   const session = driver.session(); // Crea una sessione all'interno della route
 
@@ -180,46 +194,36 @@ app.post('/api/login', async (req, res) => {
       tx.run('MATCH (g:Giornalista) WHERE g.email = $email RETURN g', { email })
     );
 
+    console.log('Dopo la query');
+
     if (result.records.length === 0) {
       console.log('Login failed, email non trovata nel database');
       return res.status(401).json({ success: false, message: 'Email o password non validi' });
     }
     const storedHash = result.records[0].get('g').properties.passwd;
+    console.log('storedHash from DB:', storedHash);
     const match = await bcrypt.compare(password, storedHash);
+    console.log('bcrypt.compare returned:', match);
 
-    /* if(match)
+    console.log('Dopo Compare');
+
+    if(!match)
     {
-      console.log('Login successful');
-      const giornalista = result.records[0].get('g').properties;
-
-      const token = jwt.sign(
-        { email: giornalista.email, 
-          nome: giornalista.nome
-        },
-        secretKey,
-        { expiresIn: '1h' }
-      );
-
-      res.json({
-        success: true,
-        token,
-        giornalista: {
-          email: giornalista.email,
-          nome: giornalista.nome,
-          articoli_creati: giornalista.articoli_creati
-        } });
-    }
- */
-
-    if(!match) return res.status(401).json({ success: false, message: 'Email o password non validi' });
+      console.log('❌ Password NON corrisponde, return 401');
+      return res.status(401).json({ success: false, message: 'Email o password non validi' });
+    } 
+    console.log('✅ Password corretta, procedo a creare il token');
+    console.log('Password corretta --- qui si blocca il codice');
     const token = jwt.sign(
       { email: email },
       secretKey,
       { expiresIn: '1h' }
     );
+    console.log('Token creato:', token);
     res.json({
       success: true,
       token,
+      expiresIn: 3600,
       giornalista: {
         email: email,
         nome: result.records[0].get('g').properties.nome,
@@ -241,7 +245,7 @@ async function createGiornalista(email, password, nome) {
   const session = driver.session();
 
   try {
-    const passwordHash = hashString(password);
+    const passwordHash = hashUserCredentials(password);
 
     const result = await session.executeWrite(tx =>
       tx.run(
@@ -272,12 +276,44 @@ app.post('/api/create_giornalista', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Email, password e nome sono obbligatori' });
   }
 
+  const session = driver.session();
+
   try {
-    const giornalista = await createGiornalista(email, password, nome);
-    res.status(201).json({ success: true, giornalista });
+    const hashed = await hashPassword(password);
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        'CREATE (g:Giornalista {email: $email, passwd: $passwd, nome: $nome, articoli_creati: 0}) RETURN g',
+        { email, passwd: hashed, nome }
+      )
+    );
+    const record = result.records[0].get('g').properties;
+
+    const token = generateToken({ email, nome });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict', // Imposta a true in produzione
+      maxAge: 3600000 // 1 ora
+    });
+
+    res.status(201).json({
+      success: true,
+      giornalista: {
+        email: record.email,
+        nome: record.nome,
+        articoli_creati: record.articoli_creati
+      }
+    });
+    console.log('Giornalista creato con successo:', record);
+    
   } catch (error) {
+    console.error('Errore nella creazione del giornalista:', error);
     res.status(500).json({ success: false, message: 'Errore interno del server' });
   }
+  finally {
+    session.close();
+  }  
 });
 
 //Get All Articles

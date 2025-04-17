@@ -18,6 +18,7 @@ function LoginForm() {
             // Invia una richiesta POST al server
             const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
