@@ -1,5 +1,6 @@
 //Backend ServerJS
 //For Rest Operations and Server Mantenance
+require('dotenv').config();
 const bcrypt = require("bcrypt");
 const express = require("express");
 const cors = require("cors");
@@ -8,12 +9,13 @@ const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 
 
-const PORT = 3001;
+
+const PORT = process.env.PORT || 3001; // Usa la variabile d'ambiente PORT o il valore predefinito 3001
 
 
 //For DB 
 const neo4j = require("neo4j-driver");
-const driver = neo4j.driver('neo4j://localhost:7687', neo4j.auth.basic('neo4j', 'pressportaldb')) 
+const driver = neo4j.driver(process.env.NEO4J_URI, neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASSWORD)); 
 const session = driver.session()
 const axios = require("axios");
 const fs = require("fs").promises;
@@ -29,11 +31,13 @@ app.use(express.urlencoded({ extended: true }));
 //JWT
 const jwt = require("jsonwebtoken");
 //Token
-const secretKey = '502f90aeb311ffb55b0e7eed4876bc615ee03c8373f2a6f4a902c2a82dc4b486d312f1dd5eb7ae38d1a66cd759ada5f7601eb443be9d24c8c196d6463435b62bc86e3d8fc9ef3f8fe1bfe4e23f2f08790f6e234baf1771ef814a54428feb95b5a7a10ca31e5d6ef7e0dd96c06aa6a58313f762c57ff69c00245e40ffaef4db942cbd54c7444e7eed3f2ceaa53412583a6276c28778eb908b439a4b21ff5d60fbfbfa9441d63c6a7f00205d5af25e96a679373d63a1deb4271585da640422d4a4fb835b99eea585c33bcd8919924f52d0b401395f3dfba8465eec12d0d5550ef78147c412e652070f33472df744872ce0c948b387a5b891c9202838f9e5d2be76';
+const secretKey = process.env.JWT_SECRET
+
+const ImgurclientId = process.env.IMGUR_CLIENT_ID;//imgur client id
+const imgurUrl = 'https://api.imgur.com/3/upload';
 
 //Image Upload
 async function uploadToImgur(imagePath) {
-  const clientId = '5dfaed2dd75834f'; // Sostituisci con il tuo Client ID di Imgur
 
   try {
       // Leggi il file come base64
@@ -41,11 +45,11 @@ async function uploadToImgur(imagePath) {
 
       // Invia la richiesta a Imgur
       const response = await axios.post(
-          'https://api.imgur.com/3/upload',
+          imgurUrl,
           { image },
           {
               headers: {
-                  Authorization: `Client-ID ${clientId}`,
+                  Authorization: `Client-ID ${ImgurclientId}`,
               },
           }
       );
