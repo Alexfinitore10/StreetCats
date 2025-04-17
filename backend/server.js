@@ -138,42 +138,6 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
   }
 });
 
-//Insert Article
-/* app.post('/api/article', async (req, res) => {
-  const session = driver.session();
-  console.log(req.body);
-
-  try {
-    const image = req.body.image;
-    //const image = __dirname + "/Pigs.png";
-    console.log("Immagine: ", req.body.image);
-    const imageUrl = await uploadToImgur(image).then((imageUrl) => {
-      console.log('Link dell\'immagine:', imageUrl);
-    });
-
-    const result = await session.run(
-      "CREATE (a: Article {title: $title, description: $description, publishedDate: $publishedDate, bodyPreview: $bodyPreview, image: $image, tags: $tags}) RETURN a",
-      {
-        title: req.body.title,
-        description: req.body.description,
-        publishedDate: req.body.publishedDate,
-        bodyPreview: req.body.bodyPreview,
-        image: imageUrl,
-        tags: req.body.tags ? req.body.tags.split(',').map(tag => tag.trim()) : [],
-      }
-    );
-
-    const singleRecord = result.records[0];
-    const node = singleRecord.get(0);
-    res.send(node.properties);
-  } catch (error) {
-    console.error('Errore durante la creazione dell\'articolo:', error);
-    res.status(500).json({ success: false, message: 'Errore interno del server' });
-  } finally {
-    session.close();
-  }
-}); */
-
 //Login Control
 app.post('/api/login', async (req, res) => {
   console.log('Request body:', req.body);
@@ -199,13 +163,29 @@ app.post('/api/login', async (req, res) => {
     const storedHash = result.records[0].get('g').properties.passwd;
     const match = await bcrypt.compare(password, storedHash);
 
-    if (match) {
+    if(match)
+    {
       console.log('Login successful');
-      res.json({ success: true });
-    } else {
-      console.log('Login failed, password non corretta');
-      res.status(401).json({ success: false, message: 'Email o password non validi' });
+      const giornalista = result.records[0].get('g').properties;
+
+      const token = jwt.sign(
+        { email: giornalista.email, 
+          nome: giornalista.nome
+        },
+        secretKey,
+        { expiresIn: '1h' }
+      );
+
+      res.json({
+        success: true,
+        token,
+        giornalista: {
+          email: giornalista.email,
+          nome: giornalista.nome,
+          articoli_creati: giornalista.articoli_creati
+        } });
     }
+
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ success: false, message: 'Errore interno del server' });
