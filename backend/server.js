@@ -78,9 +78,24 @@ function hashUserCredentials(userPassword) {
   });
 }
 
+//Auth Middleware JWT
+function authenticateToken(req, res, next) 
+{
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Token mancante' });
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Token non valido' });
+    req.user = user;
+    next();
+  });
+}
 
-app.post('/api/article', upload.single('image'), async (req, res) => {
+
+
+app.post('/api/article', authenticateToken, upload.single('image'), async (req, res) => {
   const filePath = req.file.path; // Percorso del file salvato temporaneamente
+  const session = driver.session();
   try {
       const { title, description, publishedDate, contenuto, tags } = req.body;
       console.log('Dati ricevuti:', req.body);
@@ -109,7 +124,8 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
                 publishedDate: $publishedDate,
                 contenuto: $contenuto,
                 image: $image,
-                tags: $tags
+                tags: $tags,
+                creatoDa: $author
             })
             RETURN a
             `,
@@ -121,12 +137,14 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
                 contenuto: contenuto,
                 image: imageUrl,
                 tags: tags ,
+                author: req.user.email
             }
         );
     });
 
       if (result.records.length === 0) {
         throw new Error('Errore durante la creazione dell\'articolo');
+        await fs.unlink(filePath);
       }else{
         console.log('Articolo creato con successo');
       }
@@ -139,6 +157,8 @@ app.post('/api/article', upload.single('image'), async (req, res) => {
       console.error('Errore:', error);
       res.status(500).json({ message: 'Errore durante la creazione dell\'articolo' });
       await fs.unlink(filePath);
+  }finally {
+    session.close();
   }
 });
 
@@ -167,7 +187,7 @@ app.post('/api/login', async (req, res) => {
     const storedHash = result.records[0].get('g').properties.passwd;
     const match = await bcrypt.compare(password, storedHash);
 
-    if(match)
+    /* if(match)
     {
       console.log('Login successful');
       const giornalista = result.records[0].get('g').properties;
@@ -189,7 +209,24 @@ app.post('/api/login', async (req, res) => {
           articoli_creati: giornalista.articoli_creati
         } });
     }
+ */
 
+    if(!match) return res.status(401).json({ success: false, message: 'Email o password non validi' });
+    const token = jwt.sign(
+      { email: email },
+      secretKey,
+      { expiresIn: '1h' }
+    );
+    res.json({
+      success: true,
+      token,
+      giornalista: {
+        email: email,
+        nome: result.records[0].get('g').properties.nome,
+        articoli_creati: result.records[0].get('g').properties.articoli_creati
+      }
+    });
+    console.log('Login successful');
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ success: false, message: 'Errore interno del server' });
