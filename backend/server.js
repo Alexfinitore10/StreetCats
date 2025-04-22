@@ -7,6 +7,7 @@ const cors = require("cors");
 const multer = require('multer');
 const path = require('path');
 const upload = multer({ dest: 'uploads/' });
+const cookieParser = require('cookie-parser');
 
 
 
@@ -23,6 +24,7 @@ const fs = require("fs").promises;
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(cors({
   origin: process.env.LOCALFRONTENDSERVER_URL,
@@ -84,15 +86,24 @@ function hashUserCredentials(userPassword) {
 //Auth Middleware JWT
 function authenticateToken(req, res, next) 
 {
+  const tokenfromcookie = req.cookies.token;
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
+
+  const finaltoken = token || tokenfromcookie;
+
   if (!token) return res.status(401).json({ message: 'Token mancante' });
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(finaltoken, secretKey, (err, user) => {
     if (err) return res.status(403).json({ message: 'Token non valido' });
     req.user = user;
     next();
   });
 }
+
+//Token Check
+app.get('/api/check_token', authenticateToken, (req, res) => {
+  return res.json({ isLoggedIn: true, user: req.user });
+});
 
 function generateToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -213,14 +224,18 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Email o password non validi' });
     } 
     console.log('✅ Password corretta, procedo a creare il token');
-    console.log('Password corretta --- qui si blocca il codice');
-    const token = jwt.sign(
-      { email: email },
-      secretKey,
-      { expiresIn: '1h' }
-    );
-    console.log('Token creato:', token);
-    res.json({
+
+    // Generate JWT token after successful password match
+    
+    const token = generateToken({ email, nome: result.records[0].get('g').properties.nome });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Strict', // Imposta a true in produzione
+      maxAge: 3600000 // 1 ora
+    })
+    .json({
       success: true,
       token,
       expiresIn: 3600,
@@ -230,6 +245,8 @@ app.post('/api/login', async (req, res) => {
         articoli_creati: result.records[0].get('g').properties.articoli_creati
       }
     });
+
+    console.log('Token creato:', token);
     console.log('Login successful');
   } catch (error) {
     console.error('Error during login:', error);
@@ -240,33 +257,15 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Funzione per creare un giornalista
-async function createGiornalista(email, password, nome) {
-  const session = driver.session();
-
-  try {
-    const passwordHash = hashUserCredentials(password);
-
-    const result = await session.executeWrite(tx =>
-      tx.run(
-        'CREATE (g:Giornalista {email: $email, passwd: $password, nome: $nome, articoli_creati: 0}) RETURN g',
-        { email, password: passwordHash, nome }
-      )
-    );
-
-    if (result.records.length === 0) {
-      throw new Error('Errore durante la creazione del giornalista');
-    }
-
-    const giornalista = result.records[0].get('g').properties;
-    return giornalista;
-  } catch (error) {
-    console.error('Errore durante la creazione del giornalista:', error);
-    throw error;
-  } finally {
-    session.close();
-  }
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('', {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Strict', // Imposta a true in produzione
+  });
+  res.status(200).json({ success: true, message: 'Logout effettuato con successo' });
 }
+);
 
 // Endpoint per creare un giornalista
 app.post('/api/create_giornalista', async (req, res) => {
@@ -292,7 +291,7 @@ app.post('/api/create_giornalista', async (req, res) => {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'Strict', // Imposta a true in produzione
       maxAge: 3600000 // 1 ora
     });

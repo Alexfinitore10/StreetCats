@@ -44,7 +44,7 @@ const router = createBrowserRouter([
   {
     path: "/articolo/:articleId",
     element: <ArticlePage />
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

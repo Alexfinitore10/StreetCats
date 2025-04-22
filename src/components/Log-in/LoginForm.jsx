@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, } from "react";
 import { Link } from "react-router-dom";
 
 function LoginForm() {
@@ -23,12 +23,14 @@ function LoginForm() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(formData)
-            });
+            })
+            .then((response) => response.json());
 
             // Controlla se la richiesta è andata a buon fine
             if (response.ok) {
                 const data = await response.json();
                 console.log('Login success:', data);
+                window.location.href = '/home';
                 // Esegui altre azioni, come reindirizzare l'utente
             } else {
                 console.error('Login failed:', response.statusText);
