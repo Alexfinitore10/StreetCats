@@ -10,25 +10,25 @@ function LoginForm() {
 
         // Crea un oggetto con i dati del form
         const formData = {
-            email: email,
-            password: password
+            email,
+            password
         };
 
         try {
             // Invia una richiesta POST al server
             const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
-                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(formData)
-            })
-            .then((response) => response.json());
+            });
+
+            const data = await response.json();
 
             // Controlla se la richiesta è andata a buon fine
             if (response.ok) {
-                const data = await response.json();
                 console.log('Login success:', data);
                 window.location.href = '/home';
                 // Esegui altre azioni, come reindirizzare l'utente

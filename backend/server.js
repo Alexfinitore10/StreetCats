@@ -86,13 +86,14 @@ function hashUserCredentials(userPassword) {
 //Auth Middleware JWT
 function authenticateToken(req, res, next) 
 {
-  const tokenfromcookie = req.cookies.token;
+  
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const tokenFromHeader = authHeader?.split(' ')[1];
+  const tokenfromcookie = req.cookies.token;
 
-  const finaltoken = token || tokenfromcookie;
+  const finaltoken = tokenFromHeader || tokenfromcookie;
 
-  if (!token) return res.status(401).json({ message: 'Token mancante' });
+  if (!finaltoken) return res.status(401).json({ message: 'Token mancante' });
   jwt.verify(finaltoken, secretKey, (err, user) => {
     if (err) return res.status(403).json({ message: 'Token non valido' });
     req.user = user;
@@ -232,7 +233,7 @@ app.post('/api/login', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: false,
-      sameSite: 'Strict', // Imposta a true in produzione
+      sameSite: 'Strict', 
       maxAge: 3600000 // 1 ora
     })
     .json({
@@ -258,7 +259,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-  res.clearCookie('', {
+  res.clearCookie('token', {
     httpOnly: true,
     secure: false,
     sameSite: 'Strict', // Imposta a true in produzione
