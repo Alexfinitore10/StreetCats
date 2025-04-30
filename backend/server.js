@@ -316,6 +316,39 @@ app.post('/api/create_giornalista', async (req, res) => {
   }  
 });
 
+app.get('/api/create_user', async (req, res) => {
+  const { email, password, nome } = req.body;
+
+  const session = driver.session();
+
+  try {
+    const hashed = await hashPassword(password);
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        'CREATE (u:User {email: $email, passwd: $passwd, nome: $nome}) RETURN u',
+        { email, passwd: hashed, nome }
+      )
+    );
+    const record = result.records[0].get('u').properties;
+
+    res.status(201).json({
+      success: true,
+      giornalista: {
+        email: record.email,
+        nome: record.nome
+      }
+    });
+    console.log('Utente creato con successo:', record);
+    
+  } catch (error) {
+    console.error('Errore nella creazione dell\'utente', error);
+    res.status(500).json({ success: false, message: 'Errore interno del server, riga 345' });
+  }
+  finally {
+    session.close();
+  }  
+});
+
 //Get All Articles
 app.get("/api/articles", async (req, res) => {
   try {

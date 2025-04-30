@@ -95,7 +95,7 @@ function FrontPage() {
   };
 
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber); // Cambia la pagina corrente
+    setCurrentPage(pageNumber); 
   };
 
   const totalPages = selectedTag
@@ -127,6 +127,7 @@ function FrontPage() {
             description={article.description}
             publishedDate={article.publishedDate}
             bodyPreview={article.bodyPreview}
+            author={article.author}
             tags={article.tags}
             onTagClick={handleTagClick}
             onCardClick={() => handleCardClick(article)}

@@ -8,6 +8,7 @@ const InteractiveCard = ({
   description,
   publishedDate,
   contenuto,
+  author,
   tags = [],
   onTagClick,
   onCardClick, // Nuova prop per il click sull'immagine
@@ -88,6 +89,11 @@ const InteractiveCard = ({
       <div className="w-full" onClick={handleCardClick}>
         <p className="text-gray-500 text-xs">Data : {publishedDate}</p>
       </div>
+
+      <div className="w-full text-right text-gray-500 text-xs mb-2 my-4" onClick={handleCardClick}>
+        <p>Autore : {author}</p>
+      </div>
+
       <div className="flex flex-wrap gap-2 justify-center mt-2">
         {tagsArray.map((tag, index) => (
           <span

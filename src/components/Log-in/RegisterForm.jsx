@@ -20,7 +20,7 @@ function RegisterForm(){
         };
 
         try {
-            const res = await fetch("http://localhost:3001/api/create_giornalista", {
+            const res = await fetch("http://localhost:3001/api/create_user", {
               method: "POST",
               credentials: "include",      // abilita cookie HttpOnly (se li imposti lato server)
               headers: {

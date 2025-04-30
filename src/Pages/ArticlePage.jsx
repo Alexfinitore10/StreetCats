@@ -6,6 +6,13 @@ function ArticlePage() {
   const {articleId} = useParams();
   const location = useLocation();
   const article = location.state;
+  const tags = article.tags || []; // Assicuriamoci che tags sia sempre un array
+
+  const tagsArray = Array.isArray(article.tags)
+    ? tags
+    : typeof tags === 'string'
+    ? tags.split(',').map((tag) => tag.trim())
+    : [];
   
 
   if(!article)
@@ -33,16 +40,18 @@ function ArticlePage() {
         {article.lastEditDate && <p>Ultima modifica: {article.lastEditDate}</p>}
       </div>
       
-      <div className="flex flex-wrap gap-2 mt-4">
-        {article.tags.map((tag, index) => (
-          <span
-            key={index}
-            className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200"
-          >
-            #{tag}
-          </span>
-        ))}
-      </div>
+      {tagsArray.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-4">
+          {tagsArray.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
