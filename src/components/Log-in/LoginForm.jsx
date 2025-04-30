@@ -28,8 +28,10 @@ function LoginForm() {
             const data = await response.json();
 
             // Controlla se la richiesta è andata a buon fine
-            if (response.ok) {
+            if (response.ok && data.success) {
                 console.log('Login success:', data);
+                console.log('Nome Giornalista:', data.nome);
+                localStorage.setItem('nome_giornalista', data.nome);
                 window.location.href = '/home';
                 // Esegui altre azioni, come reindirizzare l'utente
             } else {

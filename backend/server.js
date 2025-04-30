@@ -241,6 +241,7 @@ app.post('/api/login', async (req, res) => {
       token,
       expiresIn: 3600,
       giornalista: {
+        nome : result.records[0].get('g').properties.nome,
         email: email,
         nome: result.records[0].get('g').properties.nome,
         articoli_creati: result.records[0].get('g').properties.articoli_creati
@@ -248,6 +249,7 @@ app.post('/api/login', async (req, res) => {
     });
 
     console.log('Token creato:', token);
+    console.log('Nome Giornalista:', result.records[0].get('g').properties.nome);
     console.log('Login successful');
   } catch (error) {
     console.error('Error during login:', error);
@@ -305,6 +307,7 @@ app.post('/api/create_giornalista', async (req, res) => {
         articoli_creati: record.articoli_creati
       }
     });
+    console.log('Nome Giornalista:', record.nome);
     console.log('Giornalista creato con successo:', record);
     
   } catch (error) {
@@ -357,7 +360,7 @@ app.get("/api/articles", async (req, res) => {
       tx.run('MATCH (a:Article) RETURN a')
     );
     const articles = result.records.map(record => record.get('a').properties);
-    console.dir(articles, { depth: null, colors: true });
+    //console.dir(articles, { depth: null, colors: true });
     res.json(articles);
   } catch (error) {
     console.error(error);
