@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import {useState, useEffect} from "react";
+import { useAuth } from './AuthContext';
 
 function Navbar({resetState}){
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,7 +49,10 @@ function Navbar({resetState}){
             
                   if (res.ok) {
                     setIsLoggedIn(false); // aggiorni lo stato
-                    // opzionale: puoi fare anche un redirect
+                    
+                    localStorage.removeItem('nome_giornalista'); // rimuovi il nome dal local storage
+
+                    window.location.reload(); // ricarica la pagina
                     window.location.href = "/login";
                   }
                 } catch (err) {
