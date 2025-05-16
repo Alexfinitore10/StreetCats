@@ -10,21 +10,32 @@ function FrontPage() {
 
   const nome = user?.nome || localStorage.getItem('nome_giornalista') || 'Utente';
 
+  useEffect(() => {
+    if (isLoggedIn && !user?.nome) {
+      fetch('http://localhost:3001/api/check_token', {
+        credentials: 'include',
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.user?.nome) {
+            localStorage.setItem('nome_giornalista', data.user.nome);
+          }
+        })
+        .catch(error => console.error('Errore nel recupero del nome:', error));
+    }
+  }, [isLoggedIn, user]);
+
   //console.log('AuthContext user:', user);
   console.log('localStorage.getItem:', localStorage.getItem('nome_giornalista'));
   console.log('Nome calcolato:', nome);
   console.log('isLoggedIn:', isLoggedIn);
 
   const [articles, setArticles] = useState([]);
-
   const [farticles, fsetArticles] = useState(articles);
-  
+  const [myArticles, setMyArticles] = useState([]);
 
   const location = useLocation();
-
   const navigate = useNavigate();
-
-  
 
   //Backend fetch
   useEffect(() => {
@@ -42,6 +53,25 @@ function FrontPage() {
         console.error('There was a problem with the fetch operation:', error);
       });
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetch('http://localhost:3001/api/my_articles', {
+        credentials: 'include',
+      })
+        .then(response => response.json())
+        .then(data => setMyArticles(data))
+        .catch(error => console.error('Errore nel recupero degli articoli:', error));
+    }
+  }, [isLoggedIn]);
+
+  const isMyArticle = (articleId) => {
+    if (!Array.isArray(myArticles)) {
+      console.error('myArticles non è un array:', myArticles);
+      return false;
+    }
+    return myArticles.some(article => article.id === articleId);
+  };
 
   const [visibleArticles, setVisibleArticles] = useState([]);
 
@@ -63,8 +93,6 @@ function FrontPage() {
     fsetArticles(sortedArticles);
   };
 
-
-
   //tag logic
   useEffect(() => {
     if (selectedTag) {
@@ -80,7 +108,6 @@ function FrontPage() {
     }
   }, [selectedTag, articles]);
 
-
   useEffect(() => {
     if (selectedTag) {
       const indexOfLastArticle = currentPage * articlesPerPage;
@@ -94,8 +121,6 @@ function FrontPage() {
       setVisibleArticles(currentArticles);
     }
   }, [selectedTag, farticles, currentPage, articlesPerPage, articles]);
-
-  
 
   const handleTagClick = (tag) => {
     console.log(`Clicked on tag: ${tag}`);
@@ -119,9 +144,7 @@ function FrontPage() {
       resetStateFunction();
     }
   }, [location.pathname, articles]);
-  
 
-  
   return (
     <div className="mx-auto flex flex-col items-center justify-center px-4 mb-8">
       <h1 className="text-5xl font-bold mb-6">
@@ -147,6 +170,7 @@ function FrontPage() {
             tags={article.tags}
             onTagClick={handleTagClick}
             onCardClick={() => handleCardClick(article)}
+            isMyArticle={isMyArticle(article.id)} // Passa se è un articolo del giornalista
           />
         ))}
       </div>

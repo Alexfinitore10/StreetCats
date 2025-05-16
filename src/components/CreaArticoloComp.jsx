@@ -23,9 +23,6 @@ function CreaArticoloComp() {
       formData.append('image', immagineCopertina);
     }
     formData.append('tags', tags.split(','));
-    
-
-    
 
     console.log('Dati articolo:', {
       title: titolo,
@@ -40,10 +37,12 @@ function CreaArticoloComp() {
     try {
       const response = await fetch('http://localhost:3001/api/article', {
         method: 'POST',
+        credentials: 'include', // Invia automaticamente i cookie HTTP-only
         body: formData,
       });
 
-      console.log('Response:', response);
+      console.log('Response status:', response.status); // Log dello stato della risposta
+      console.log('Response body:', await response.text()); // Log del corpo della risposta
 
       if (response.ok) {
         alert('Articolo creato con successo!');
@@ -53,9 +52,10 @@ function CreaArticoloComp() {
         setImmagineCopertina(null);
         setDescription('');
         setTags('');
-        setPublishedDate(new Date().toISOString().split(',')[0]);
+        setPublishedDate(new Date().toISOString().split('T')[0]);
       } else {
-        alert('Errore nella creazione dell\'articolo');
+        const errorData = await response.json();
+        alert(`Errore nella creazione dell'articolo: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Errore durante l\'invio dei dati:', error);

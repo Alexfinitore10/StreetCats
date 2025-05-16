@@ -12,11 +12,11 @@ const InteractiveCard = ({
   tags = [],
   onTagClick,
   onCardClick, // Nuova prop per il click sull'immagine
+  isMyArticle, // Nuova prop per verificare se l'articolo è del giornalista
 }) => {
   const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
   const cardRef = useRef(null);
   const navigate = useNavigate();
-
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -49,10 +49,9 @@ const InteractiveCard = ({
       onTagClick(tag);
     }
   };
-  
+
   const handleCardClick = (article) => {
-    if(onCardClick)
-    {
+    if (onCardClick) {
       onCardClick(article);
     }
   };
@@ -68,7 +67,6 @@ const InteractiveCard = ({
     <div
       className="bg-white rounded-lg shadow-lg overflow-hidden p-6 flex flex-col cursor-pointer hover:bg-gray-100 transition-colors duration-200"
       ref={cardRef}
-      
     >
       <div className="w-full h-40 mb-4 relative">
         <img
@@ -79,11 +77,15 @@ const InteractiveCard = ({
         />
       </div>
       <div className="w-full mb-2">
-        <h2 className="text-2xl font-semibold text-gray-800" onClick={handleCardClick}>{title}</h2>
+        <h2 className="text-2xl font-semibold text-gray-800" onClick={handleCardClick}>
+          {title}
+        </h2>
       </div>
 
       <div className="w-full mb-4">
-        <p className="text-gray-600 text-sm" onClick={handleCardClick}>{description}</p>
+        <p className="text-gray-600 text-sm" onClick={handleCardClick}>
+          {description}
+        </p>
       </div>
 
       <div className="w-full" onClick={handleCardClick}>
@@ -105,6 +107,15 @@ const InteractiveCard = ({
           </span>
         ))}
       </div>
+
+      {isMyArticle && (
+        <button
+          onClick={() => navigate(`/modifica-articolo/${articleId}`)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Modifica
+        </button>
+      )}
     </div>
   );
 };

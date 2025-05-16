@@ -84,18 +84,25 @@ function hashUserCredentials(userPassword) {
 }
 
 //Auth Middleware JWT
-function authenticateToken(req, res, next) 
-{
-  
+function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const tokenFromHeader = authHeader?.split(' ')[1];
   const tokenfromcookie = req.cookies.token;
 
   const finaltoken = tokenFromHeader || tokenfromcookie;
 
-  if (!finaltoken) return res.status(401).json({ message: 'Token mancante' });
+  console.log('Token ricevuto:', finaltoken); // Log per verificare il token ricevuto
+
+  if (!finaltoken) {
+    console.error('Token mancante');
+    return res.status(401).json({ message: 'Token mancante' });
+  }
+
   jwt.verify(finaltoken, secretKey, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Token non valido' });
+    if (err) {
+      console.error('Errore nella verifica del token:', err.message); // Log per errori di verifica
+      return res.status(403).json({ message: 'Token non valido' });
+    }
     req.user = user;
     next();
   });
@@ -124,76 +131,75 @@ async function hashPassword(password) {
     return await bcrypt.hash(password, salt);
   }
 
-
-
-
-
-
+// Endpoint per creare un articolo
 app.post('/api/article', authenticateToken, upload.single('image'), async (req, res) => {
-  const filePath = req.file.path; // Percorso del file salvato temporaneamente
+  const filePath = req.file?.path; // Percorso del file salvato temporaneamente
   const session = driver.session();
   try {
-      const { title, description, publishedDate, contenuto, tags } = req.body;
-      console.log('Dati ricevuti:', req.body);
-      //console.log(`Titolo: ${title}, Descrizione: ${description}, Data di pubblicazione: ${publishedDate}, Anteprima: ${bodyPreview}, Tags: ${tags || 'Nessun tag'}`);
+    const { title, description, publishedDate, contenuto, tags } = req.body;
+    const authorName = req.user.nome; // Recupera il nome dell'autore dal token JWT
 
-      
-      console.log('File ricevuto e salvato temporaneamente in:', filePath);
+    console.log('Dati ricevuti:', req.body);
+    console.log('Nome autore:', authorName); // Log per verificare il nome dell'autore
 
+    let imageUrl = null;
+    if (filePath) {
       // Invia il file a Imgur
-      const imageUrl = await uploadToImgur(filePath);
+      imageUrl = await uploadToImgur(filePath);
+    }
 
-      const result = await session.executeWrite(async (tx) => {
-        // Step 1: Ottieni il massimo ID
-        const maxIdResult = await tx.run(
-            "MATCH (a:Article) RETURN COALESCE(MAX(a.id), 0) AS maxId"
-        );
-        const maxId = maxIdResult.records[0].get("maxId");
+    const result = await session.executeWrite(async (tx) => {
+      // Step 1: Ottieni il massimo ID
+      const maxIdResult = await tx.run(
+        "MATCH (a:Article) RETURN COALESCE(MAX(a.id), 0) AS maxId"
+      );
+      const maxId = maxIdResult.records[0].get("maxId");
 
-        // Step 2: Crea il nuovo articolo con l'ID incrementato
-        return await tx.run(
-            `
-            CREATE (a:Article {
-                id: $id,
-                title: $title,
-                description: $description,
-                publishedDate: $publishedDate,
-                contenuto: $contenuto,
-                image: $image,
-                tags: $tags,
-                creatoDa: $author
-            })
-            RETURN a
-            `,
-            {
-                id: maxId + 1,
-                title: title,
-                description: description,
-                publishedDate: publishedDate,
-                contenuto: contenuto,
-                image: imageUrl,
-                tags: tags ,
-                author: req.user.email
-            }
-        );
+      // Step 2: Crea il nuovo articolo con l'ID incrementato e il nome dell'autore
+      return await tx.run(
+        `
+        CREATE (a:Article {
+          id: $id,
+          title: $title,
+          description: $description,
+          publishedDate: $publishedDate,
+          contenuto: $contenuto,
+          image: $image,
+          tags: $tags,
+          author: $authorName
+        })
+        RETURN a
+        `,
+        {
+          id: maxId + 1,
+          title,
+          description,
+          publishedDate,
+          contenuto,
+          image: imageUrl,
+          tags: tags.split(','),
+          authorName,
+        }
+      );
     });
 
-      if (result.records.length === 0) {
-        throw new Error('Errore durante la creazione dell\'articolo');
-        await fs.unlink(filePath);
-      }else{
-        console.log('Articolo creato con successo');
-      }
+    if (result.records.length === 0) {
+      throw new Error("Errore durante la creazione dell'articolo");
+    }
 
+    res.status(200).json({ message: 'Articolo creato con successo', article: result.records[0].get('a').properties });
 
-      res.status(200).json({ message: 'Articolo creato con successo', imageUrl });
-      await fs.unlink(filePath);//elimina il file temporaneo
-      console.log('File eliminato');
+    if (filePath) {
+      await fs.unlink(filePath); // Elimina il file temporaneo
+    }
   } catch (error) {
-      console.error('Errore:', error);
-      res.status(500).json({ message: 'Errore durante la creazione dell\'articolo' });
-      await fs.unlink(filePath);
-  }finally {
+    console.error('Errore durante la creazione dell\'articolo:', error);
+    res.status(500).json({ message: 'Errore durante la creazione dell\'articolo' });
+
+    if (filePath) {
+      await fs.unlink(filePath); // Elimina il file temporaneo in caso di errore
+    }
+  } finally {
     session.close();
   }
 });
@@ -372,6 +378,61 @@ app.get("/api/articles", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while retrieving articles.');
+  }
+});
+
+// Endpoint per recuperare gli articoli creati dal giornalista
+app.get('/api/my_articles', authenticateToken, async (req, res) => {
+  const session = driver.session(); // Crea una nuova sessione per questa richiesta
+  try {
+    const result = await session.executeRead(tx =>
+      tx.run(
+        `
+        MATCH (g:Giornalista {email: $email})-[:CREATO]->(a:Article)
+        RETURN a
+        `,
+        { email: req.user.email }
+      )
+    );
+
+    const articles = result.records.map(record => record.get('a').properties);
+    res.json(articles);
+  } catch (error) {
+    console.error('Errore nel recupero degli articoli:', error);
+    res.status(500).json({ message: 'Errore nel recupero degli articoli' });
+  } finally {
+    session.close(); // Chiudi la sessione al termine
+  }
+});
+
+// Endpoint per aggiornare un articolo
+app.put('/api/article/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { title, description, contenuto, tags } = req.body;
+
+  try {
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        `
+        MATCH (a:Article {id: $id})
+        SET a.title = $title,
+            a.description = $description,
+            a.contenuto = $contenuto,
+            a.tags = $tags
+        RETURN a
+        `,
+        { id: parseInt(id), title, description, contenuto, tags }
+      )
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ message: 'Articolo non trovato' });
+    }
+
+    res.json({ message: 'Articolo aggiornato con successo' });
+  } catch (error) {
+    console.error('Errore durante l\'aggiornamento dell\'articolo:', error);
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'articolo' });
   }
 });
 
