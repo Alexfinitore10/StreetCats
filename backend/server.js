@@ -103,7 +103,14 @@ function authenticateToken(req, res, next)
 
 //Token Check
 app.get('/api/check_token', authenticateToken, (req, res) => {
-  return res.json({ isLoggedIn: true, user: req.user });
+  return res.json({
+    isLoggedIn: true,
+    user: {
+      nome: req.user.nome, // assicurati che `req.user` abbia questo campo
+      email: req.user.email, // opzionale
+      // altri dati che vuoi passare
+    },
+  });
 });
 
 function generateToken(payload) {

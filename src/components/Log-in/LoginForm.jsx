@@ -1,9 +1,11 @@
-import { useState, } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../AuthContext"; // Import AuthContext
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { login } = useAuth(); // Use login function from AuthContext
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Previene il comportamento di default del form
@@ -27,17 +29,18 @@ function LoginForm() {
 
             const data = await response.json();
 
-
             console.log('Response data:', data);
 
             // Controlla se la richiesta è andata a buon fine
             if (response.ok && data.success) {
                 console.log('Login success:', data);
                 console.log('Nome Giornalista:', data.giornalista.nome);
-                //localStorage.setItem('isLoggedIn', 'true');
                 
-                localStorage.setItem('nome_giornalista', data.giornalista.nome);
-                window.location.href = '/home';
+                localStorage.setItem('nome_giornalista', data.giornalista.nome); // Save name in localStorage
+                console.log('localStorage.getItem:', localStorage.getItem('nome_giornalista'));
+                login({ nome: data.giornalista.nome, email: data.giornalista.email }); // Update AuthContext
+                console.log('AuthContext login data:', { nome: data.giornalista.nome, email: data.giornalista.email });
+                //window.location.href = '/home';
                 // Esegui altre azioni, come reindirizzare l'utente
             } else {
                 console.error('Login failed:', response.statusText);

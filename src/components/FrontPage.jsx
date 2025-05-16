@@ -6,9 +6,14 @@ import Navbar from './NavBar';
 
 function FrontPage() {
 
-  const { isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn, user, loading } = useAuth();
 
-  const nome = localStorage.getItem('nome_giornalista');
+  const nome = user?.nome || localStorage.getItem('nome_giornalista') || 'Utente';
+
+  //console.log('AuthContext user:', user);
+  console.log('localStorage.getItem:', localStorage.getItem('nome_giornalista'));
+  console.log('Nome calcolato:', nome);
+  console.log('isLoggedIn:', isLoggedIn);
 
   const [articles, setArticles] = useState([]);
 
@@ -18,6 +23,8 @@ function FrontPage() {
   const location = useLocation();
 
   const navigate = useNavigate();
+
+  
 
   //Backend fetch
   useEffect(() => {
