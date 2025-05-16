@@ -204,6 +204,30 @@ app.post('/api/article', authenticateToken, upload.single('image'), async (req, 
   }
 });
 
+// Endpoint per ottenere un articolo specifico
+app.get('/api/article/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await session.executeRead(tx =>
+      tx.run(
+        `MATCH (a:Article {id: $id}) RETURN a`,
+        { id: parseInt(id) }
+      )
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ message: 'Articolo non trovato' });
+    }
+
+    const article = result.records[0].get('a').properties;
+    res.json(article);
+  } catch (error) {
+    console.error('Errore durante il recupero dell\'articolo:', error);
+    res.status(500).json({ message: 'Errore durante il recupero dell\'articolo' });
+  }
+});
+
 //Login Control
 app.post('/api/login', async (req, res) => {
   console.log('Request body:', req.body);
@@ -405,23 +429,44 @@ app.get('/api/my_articles', authenticateToken, async (req, res) => {
   }
 });
 
-// Endpoint per aggiornare un articolo
-app.put('/api/article/:id', authenticateToken, async (req, res) => {
+// Endpoint migliorato per aggiornare un articolo
+app.put('/api/articles/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
-  const { title, description, contenuto, tags } = req.body;
+  const { title, description, contenuto, tags, publishedDate } = req.body;
+  const lastEditDate = new Date().toISOString(); // Data dell'ultima modifica
+
+  console.log('ID ricevuto:', id); // Log per verificare l'ID
+  console.log('Utente autenticato:', req.user.nome); // Log per verificare l'utente autenticato
 
   try {
+    // Verifica che l'articolo esista e appartenga all'utente autenticato
+    const checkResult = await session.executeRead(tx =>
+      tx.run(
+        `MATCH (a:Article {id: $id}) WHERE a.author = $author RETURN a`,
+        { id: parseInt(id), author: req.user.nome }
+      )
+    );
+
+    console.log('Risultato query:', checkResult.records); // Log per verificare il risultato della query
+
+    if (checkResult.records.length === 0) {
+      return res.status(403).json({ message: 'Non sei autorizzato a modificare questo articolo o non esiste.' });
+    }
+
+    // Aggiorna l'articolo
     const result = await session.executeWrite(tx =>
       tx.run(
         `
         MATCH (a:Article {id: $id})
-        SET a.title = $title,
-            a.description = $description,
-            a.contenuto = $contenuto,
-            a.tags = $tags
+        SET a.title = COALESCE($title, a.title),
+            a.description = COALESCE($description, a.description),
+            a.contenuto = COALESCE($contenuto, a.contenuto),
+            a.tags = COALESCE($tags, a.tags),
+            a.publishedDate = COALESCE($publishedDate, a.publishedDate),
+            a.lastEditDate = $lastEditDate
         RETURN a
         `,
-        { id: parseInt(id), title, description, contenuto, tags }
+        { id: parseInt(id), title, description, contenuto, tags, publishedDate, lastEditDate }
       )
     );
 
@@ -429,7 +474,58 @@ app.put('/api/article/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Articolo non trovato' });
     }
 
-    res.json({ message: 'Articolo aggiornato con successo' });
+    res.json({ message: 'Articolo aggiornato con successo', lastEditDate });
+  } catch (error) {
+    console.error('Errore durante l\'aggiornamento dell\'articolo:', error);
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'articolo' });
+  }
+});
+
+// Endpoint per modificare un articolo
+app.put('/api/articles/modifyarticle', authenticateToken, async (req, res) => {
+  const { id, title, description, contenuto, tags, publishedDate } = req.body;
+  const lastEditDate = new Date().toISOString(); // Data dell'ultima modifica
+
+  console.log('ID ricevuto:', id); // Log per verificare l'ID
+  console.log('Utente autenticato:', req.user.nome); // Log per verificare l'utente autenticato
+
+  try {
+    // Verifica che l'articolo esista e appartenga all'utente autenticato
+    const checkResult = await session.executeRead(tx =>
+      tx.run(
+        `MATCH (a:Article {id: $id}) WHERE a.author = $author RETURN a`,
+        { id: parseInt(id), author: req.user.nome }
+      )
+    );
+
+    console.log('Risultato query:', checkResult.records); // Log per verificare il risultato della query
+
+    if (checkResult.records.length === 0) {
+      return res.status(403).json({ message: 'Non sei autorizzato a modificare questo articolo o non esiste.' });
+    }
+
+    // Aggiorna l'articolo
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        `
+        MATCH (a:Article {id: $id})
+        SET a.title = COALESCE($title, a.title),
+            a.description = COALESCE($description, a.description),
+            a.contenuto = COALESCE($contenuto, a.contenuto),
+            a.tags = COALESCE($tags, a.tags),
+            a.publishedDate = COALESCE($publishedDate, a.publishedDate),
+            a.lastEditDate = $lastEditDate
+        RETURN a
+        `,
+        { id: parseInt(id), title, description, contenuto, tags, publishedDate, lastEditDate }
+      )
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ message: 'Articolo non trovato' });
+    }
+
+    res.json({ message: 'Articolo aggiornato con successo', lastEditDate });
   } catch (error) {
     console.error('Errore durante l\'aggiornamento dell\'articolo:', error);
     res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'articolo' });

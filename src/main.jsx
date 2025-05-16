@@ -11,10 +11,8 @@ import CreazioneGiornalista from './Pages/CreazioneGiornalista.jsx'
 import './index.css'
 import CreaArticolo from './Pages/CreaArticolo.jsx';
 import ArticlePage from './Pages/ArticlePage.jsx';
+import ModificaArticolo from './Pages/ModificaArticolo.jsx';
 import { AuthProvider } from './components/AuthContext.jsx';
-
-
-
 
 const router = createBrowserRouter([
   {
@@ -44,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/articolo/:articleId",
     element: <ArticlePage />
+  },
+  {
+    path: "/modifica-articolo/:id",
+    element: <ModificaArticolo />,
   },
 ]);
 

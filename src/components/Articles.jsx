@@ -13,6 +13,8 @@ const InteractiveCard = ({
   onTagClick,
   onCardClick, // Nuova prop per il click sull'immagine
   isMyArticle, // Nuova prop per verificare se l'articolo è del giornalista
+  lastEditDate, // Nuova prop per la data dell'ultima modifica
+  isLoggedIn, // Nuova prop per verificare se l'utente è loggato
 }) => {
   const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50 });
   const cardRef = useRef(null);
@@ -88,12 +90,10 @@ const InteractiveCard = ({
         </p>
       </div>
 
-      <div className="w-full" onClick={handleCardClick}>
-        <p className="text-gray-500 text-xs">Data : {publishedDate}</p>
-      </div>
-
-      <div className="w-full text-right text-gray-500 text-xs mb-2 my-4" onClick={handleCardClick}>
+      <div className="w-full text-gray-500 text-xs mb-2 my-4">
         <p>Autore : {author}</p>
+        <p>Pubblicato il: {publishedDate}</p>
+        {lastEditDate && <p>Ultima modifica: {lastEditDate}</p>} {/* Mostra la data dell'ultima modifica se disponibile */}
       </div>
 
       <div className="flex flex-wrap gap-2 justify-center mt-2">
@@ -108,7 +108,7 @@ const InteractiveCard = ({
         ))}
       </div>
 
-      {isMyArticle && (
+      {isLoggedIn && isMyArticle && (
         <button
           onClick={() => navigate(`/modifica-articolo/${articleId}`)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"

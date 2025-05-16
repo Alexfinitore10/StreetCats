@@ -1,10 +1,13 @@
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../components/AuthContext';
 
 function ArticlePage() {
-  const {articleId} = useParams();
+  const { articleId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth(); // Recupera il contesto di autenticazione
   const article = location.state;
   const tags = article.tags || []; // Assicuriamoci che tags sia sempre un array
 
@@ -13,11 +16,9 @@ function ArticlePage() {
     : typeof tags === 'string'
     ? tags.split(',').map((tag) => tag.trim())
     : [];
-  
 
-  if(!article)
-  {
-    return <p>Errore nel caricamento</p>
+  if (!article) {
+    return <p>Errore nel caricamento</p>;
   }
 
   return (
@@ -28,18 +29,18 @@ function ArticlePage() {
         alt={article.title}
         className="w-full max-w-3xl mx-auto mb-6 rounded-lg shadow-md"
       />
-      
+
       {/* Renderizzazione del Markdown dopo l'immagine */}
       <div className="prose lg:prose-lg my-6">
-        <ReactMarkdown>{article.contenuto}</ReactMarkdown>  {/* Corpo dell'articolo in Markdown */}
+        <ReactMarkdown>{article.contenuto}</ReactMarkdown> {/* Corpo dell'articolo in Markdown */}
       </div>
-      
+
       <p className="text-gray-700 text-lg">{article.description}</p>
       <div className="text-gray-500 text-sm my-4">
         <p>Pubblicato il: {article.publishedDate}</p>
         {article.lastEditDate && <p>Ultima modifica: {article.lastEditDate}</p>}
       </div>
-      
+
       {tagsArray.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4">
           {tagsArray.map((tag, index) => (
@@ -51,6 +52,15 @@ function ArticlePage() {
             </span>
           ))}
         </div>
+      )}
+
+      {article.author === user?.nome && (
+        <button
+          onClick={() => navigate(`/modifica-articolo/${articleId}`)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Modifica Articolo
+        </button>
       )}
     </div>
   );

@@ -20,7 +20,7 @@ function RegisterForm(){
         };
 
         try {
-            const res = await fetch("http://localhost:3001/api/create_user", {
+            const res = await fetch("http://localhost:3001/api/create_giornalista", { // Modificato l'endpoint
               method: "POST",
               credentials: "include",      // abilita cookie HttpOnly (se li imposti lato server)
               headers: {
@@ -35,6 +35,8 @@ function RegisterForm(){
               setError(data.message || "Registrazione fallita");
               return;
             }
+            setError(""); // Rimuove eventuali errori precedenti
+            alert("Registrazione avvenuta con successo!");
             navigate("/login");
         } catch (error) {
             console.error("Error during registration:", error);
