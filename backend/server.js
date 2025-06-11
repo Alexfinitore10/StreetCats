@@ -542,6 +542,33 @@ app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) =
   }
 });
 
+// Endpoint per cambiare la password del giornalista autenticato
+app.put('/api/change_password', authenticateToken, async (req, res) => {
+  const { newPassword } = req.body;
+  if (!newPassword) {
+    return res.status(400).json({ success: false, message: 'La nuova password è obbligatoria' });
+  }
+  const session = driver.session();
+  try {
+    const hashed = await hashPassword(newPassword);
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        'MATCH (g:Giornalista {email: $email}) SET g.passwd = $passwd RETURN g',
+        { email: req.user.email, passwd: hashed }
+      )
+    );
+    if (result.records.length === 0) {
+      return res.status(404).json({ success: false, message: 'Giornalista non trovato' });
+    }
+    res.json({ success: true, message: 'Password cambiata con successo' });
+  } catch (error) {
+    console.error('Errore durante il cambio password:', error);
+    res.status(500).json({ success: false, message: 'Errore durante il cambio password' });
+  } finally {
+    session.close();
+  }
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`)
 });

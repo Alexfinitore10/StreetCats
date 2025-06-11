@@ -13,6 +13,7 @@ import CreaArticolo from './Pages/CreaArticolo.jsx';
 import ArticlePage from './Pages/ArticlePage.jsx';
 import ModificaArticolo from './Pages/ModificaArticolo.jsx';
 import { AuthProvider } from './components/AuthContext.jsx';
+import CambiaPassword from './Pages/CambiaPassword.jsx';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: "/modifica-articolo/:id",
     element: <ModificaArticolo />,
+  },
+  {
+    path: "/cambia-password",
+    element: <CambiaPassword />
   },
 ]);
 

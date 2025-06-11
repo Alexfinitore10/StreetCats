@@ -14,21 +14,24 @@ function Navbar({ resetState }) {
         {isLoggedIn && <Link to='/creazione-utenza'>Creazione Utenza</Link>}
         {isLoggedIn && <Link to='/pubblica-articolo'>Crea articolo</Link>}
       </div>
-      <div className='flex space-x-4'>
+      <div className='flex space-x-4 flex-col items-end'>
         {isLoggedIn ? (
-          <button
-            onClick={async () => {
-              try {
-                await logout();
-                window.location.href = '/login';
-              } catch (err) {
-                console.error('Errore durante il logout:', err);
-              }
-            }}
-            className='text-red-600'
-          >
-            Logout
-          </button>
+          <>
+            <button
+              onClick={async () => {
+                try {
+                  await logout();
+                  window.location.href = '/login';
+                } catch (err) {
+                  console.error('Errore durante il logout:', err);
+                }
+              }}
+              className='text-red-600'
+            >
+              Logout
+            </button>
+            <Link to='/cambia-password' className='text-blue-700 hover:underline mt-2'>Cambia password</Link>
+          </>
         ) : (
           <Link to='/login'>Log-in</Link>
         )}

@@ -40,6 +40,7 @@ function LoginForm() {
                 console.log('localStorage.getItem:', localStorage.getItem('nome_giornalista'));
                 login({ nome: data.giornalista.nome, email: data.giornalista.email }); // Update AuthContext
                 console.log('AuthContext login data:', { nome: data.giornalista.nome, email: data.giornalista.email });
+                
                 //window.location.href = '/home';
                 // Esegui altre azioni, come reindirizzare l'utente
             } else {

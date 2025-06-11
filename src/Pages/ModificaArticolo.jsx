@@ -60,7 +60,7 @@ function ModificaArticolo() {
       if (response.ok) {
         alert('Articolo modificato con successo!');
         navigate('/home');
-        window.location.reload(); // Refresh della pagina
+        //window.location.reload(); // Refresh della pagina
       } else {
         const errorData = await response.json();
         alert(`Errore durante la modifica dell'articolo: ${errorData.message}`);

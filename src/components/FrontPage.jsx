@@ -6,7 +6,8 @@ import Navbar from './NavBar';
 
 function FrontPage() {
 
-  const { isLoggedIn, user, loading } = useAuth();
+  const { isLoggedIn, user, setUser, setIsLoggedIn, loading, login, logout } = useAuth();
+
 
   const nome = user?.nome || localStorage.getItem('nome_giornalista') || 'Utente';
 
@@ -20,6 +21,7 @@ function FrontPage() {
           if (data.user?.nome) {
             localStorage.setItem('nome_giornalista', data.user.nome);
           }
+          setIsLoggedIn(true);
         })
         .catch(error => console.error('Errore nel recupero del nome:', error));
     }
