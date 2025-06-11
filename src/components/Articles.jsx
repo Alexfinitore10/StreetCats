@@ -110,7 +110,28 @@ const InteractiveCard = ({
 
       {isLoggedIn && isMyArticle && (
         <button
-          onClick={() => navigate(`/modifica-articolo/${articleId}`)}
+          onClick={() => {
+            console.log('Dati articolo passati:', { 
+              id: articleId,
+              title,
+              description,
+              contenuto,
+              tags,
+              publishedDate,
+              author
+            });
+            navigate(`/modifica-articolo/${articleId}`, { 
+              state: { 
+                id: articleId,
+                title,
+                description,
+                contenuto,
+                tags: Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim()),
+                publishedDate,
+                author
+              }
+            });
+          }}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Modifica

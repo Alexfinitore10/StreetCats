@@ -1,78 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
 function ModificaArticolo() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [article, setArticle] = useState(null);
   const [titolo, setTitolo] = useState('');
   const [contenuto, setContenuto] = useState('');
-  const [immagineCopertina, setImmagineCopertina] = useState(null);
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState('');
   const [isPreview, setIsPreview] = useState(false);
+  const [article, setArticle] = useState(null);
+
 
   useEffect(() => {
-    // Recupera i dati dell'articolo dalla location state
+    console.log('Location state:', location.state);
+    console.log('Location completa:', location);
+    console.log('id dell\'articolo:', location.state ? location.state.id : 'Nessun ID'); // Debug log
+    // Debug log
     if (location.state) {
-      const { id, title, description, contenuto, tags, publishedDate } = location.state;
-      setArticle(location.state);
-      setTitolo(title);
-      setContenuto(contenuto);
-      setDescription(description);
-      setTags(tags.join(','));
-      setPublishedDate(publishedDate);
+      
+
+      setArticle(location.state.id);
+      setTitolo(location.state.title);
+      setContenuto(location.state.contenuto);
+      setDescription(location.state.description);
+      setTags(Array.isArray(location.state.tags) ? location.state.tags.join(',') : location.state.tags);
+      setPublishedDate(location.state.publishedDate);
     } else {
-      alert('Errore: articolo non trovato.');
+      console.log('Nessun dato articolo trovato in location.state'); // Debug log
+      alert('Errore: dati dell\'articolo non trovati');
       navigate('/home');
     }
-  }, [location.state, navigate]);
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
-      id: article.id,
+      id: article,
       title: titolo,
       description,
       contenuto,
       tags: tags.split(','),
-      publishedDate,
+      publishedDate
     };
 
-    console.log('ID articolo:', article.id); // Log per verificare l'ID dell'articolo
-    console.log('Payload inviato:', payload); // Log per verificare i dati inviati
-
     try {
-      const response = await fetch('http://localhost:3001/api/articles/modifyarticle', {
+      const response = await fetch(`http://localhost:3001/api/articles/modifyarticle/${payload.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(payload),
+        credentials: 'include',
+        body: JSON.stringify(payload)
       });
 
-      console.log('Stato della risposta:', response.status); // Log dello stato della risposta
-      console.log('Risposta completa:', await response.text()); // Log del corpo della risposta
-
       if (response.ok) {
-        alert('Articolo aggiornato con successo!');
+        alert('Articolo modificato con successo!');
         navigate('/home');
+        window.location.reload(); // Refresh della pagina
       } else {
         const errorData = await response.json();
-        alert(`Errore durante l'aggiornamento dell'articolo: ${errorData.message}`);
+        alert(`Errore durante la modifica dell'articolo: ${errorData.message}`);
       }
     } catch (error) {
-      console.error('Errore durante l\'aggiornamento:', error);
-      alert('Errore durante l\'aggiornamento');
+      console.error('Errore durante la modifica:', error);
+      alert('Errore durante la modifica dell\'articolo');
     }
   };
 
   if (!article) {
-    return <p>Caricamento in corso...</p>;
+    return <div>Caricamento...</div>;
   }
 
   return (
@@ -90,6 +90,7 @@ function ModificaArticolo() {
             required
           />
         </div>
+        
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrizione</label>
           <textarea
@@ -101,6 +102,7 @@ function ModificaArticolo() {
             required
           ></textarea>
         </div>
+
         <div>
           <label htmlFor="contenuto" className="block text-sm font-medium text-gray-700">Contenuto (Con supporto a Markdown)</label>
           <div className="flex space-x-2">
@@ -127,6 +129,7 @@ function ModificaArticolo() {
             ></textarea>
           )}
         </div>
+
         <div>
           <label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700">Data di Pubblicazione</label>
           <input
@@ -138,6 +141,7 @@ function ModificaArticolo() {
             required
           />
         </div>
+
         <div>
           <label htmlFor="tags" className="block text-sm font-medium text-gray-700">Tags (separati da virgola)</label>
           <input
@@ -149,6 +153,7 @@ function ModificaArticolo() {
             required
           />
         </div>
+
         <div>
           <button type="submit" className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
             Salva Modifiche

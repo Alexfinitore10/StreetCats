@@ -471,7 +471,7 @@ app.put('/api/articles/:id', authenticateToken, async (req, res) => {
     );
 
     if (result.records.length === 0) {
-      return res.status(404).json({ message: 'Articolo non trovato' });
+      return res.status(404).json({ message: 'Articolo non aggiornato' });
     }
 
     res.json({ message: 'Articolo aggiornato con successo', lastEditDate });
@@ -482,12 +482,22 @@ app.put('/api/articles/:id', authenticateToken, async (req, res) => {
 });
 
 // Endpoint per modificare un articolo
-app.put('/api/articles/modifyarticle', authenticateToken, async (req, res) => {
+app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) => {
   const { id, title, description, contenuto, tags, publishedDate } = req.body;
   const lastEditDate = new Date().toISOString(); // Data dell'ultima modifica
 
+  const formatted = new Date(lastEditDate).toLocaleString('it-IT', 
+    {
+      day:    '2-digit',
+    month:  '2-digit',
+    year:   'numeric',
+    hour:     '2-digit',
+    minute:   '2-digit'
+    });
+
   console.log('ID ricevuto:', id); // Log per verificare l'ID
   console.log('Utente autenticato:', req.user.nome); // Log per verificare l'utente autenticato
+  console.log('data ultima modifica:', formatted); // Log per verificare la data dell'ultima modifica
 
   try {
     // Verifica che l'articolo esista e appartenga all'utente autenticato
@@ -514,10 +524,10 @@ app.put('/api/articles/modifyarticle', authenticateToken, async (req, res) => {
             a.contenuto = COALESCE($contenuto, a.contenuto),
             a.tags = COALESCE($tags, a.tags),
             a.publishedDate = COALESCE($publishedDate, a.publishedDate),
-            a.lastEditDate = $lastEditDate
+            a.lastEditDate = $formatted
         RETURN a
         `,
-        { id: parseInt(id), title, description, contenuto, tags, publishedDate, lastEditDate }
+        { id: parseInt(id), title, description, contenuto, tags, publishedDate, formatted }
       )
     );
 

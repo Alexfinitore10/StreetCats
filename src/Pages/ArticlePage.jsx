@@ -56,7 +56,18 @@ function ArticlePage() {
 
       {article.author === user?.nome && (
         <button
-          onClick={() => navigate(`/modifica-articolo/${articleId}`)}
+          onClick={() => navigate(`/modifica-articolo/${articleId}`,
+            {
+              state: {
+                id: article.id,
+                title: article.title,
+                contenuto: article.contenuto,
+                description: article.description,
+                tags: article.tags,
+                publishedDate: article.publishedDate
+              }
+            }
+          )}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Modifica Articolo
