@@ -4,7 +4,7 @@ Benvenuti in **PressPortal**, un'applicazione fullstack progettata per creare e 
 
 ## Progresso del progetto
 
-[█████████████-----] 70%
+[█████████████-] 90%
 <img src="https://github.com/Alexfinitore10/PressPortal/blob/main/ZKZg.gif" alt="PressPortal GIF" width="15"/>
 
 
