@@ -110,6 +110,13 @@ function authenticateToken(req, res, next) {
 
 //Token Check
 app.get('/api/check_token', authenticateToken, (req, res) => {
+  console.log('--- /api/check_token chiamato ---');
+  console.log('Cookie ricevuti:', req.headers.cookie);
+  if (req.user) {
+    console.log('Utente autenticato:', req.user.nome, req.user.email);
+  } else {
+    console.log('Utente non autenticato');
+  }
   return res.json({
     isLoggedIn: true,
     user: {
@@ -271,7 +278,8 @@ app.post('/api/login', async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: 'Strict', 
-      maxAge: 3600000 // 1 ora
+      maxAge: 3600000, // 1 ora
+      path: '/',
     })
     .json({
       success: true,
@@ -298,11 +306,15 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
+  console.log('--- /api/logout chiamato ---');
+  console.log('Cookie ricevuti per logout:', req.headers.cookie);
   res.clearCookie('token', {
     httpOnly: true,
     secure: false,
     sameSite: 'Strict', // Imposta a true in produzione
+    path: '/',
   });
+  console.log('Cookie token dovrebbe essere stato eliminato.');
   res.status(200).json({ success: true, message: 'Logout effettuato con successo' });
 }
 );

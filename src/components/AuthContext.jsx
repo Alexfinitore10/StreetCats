@@ -12,40 +12,29 @@ export const AuthProvider = ({ children }) => {
   // Controlla se il token/cookie è valido al caricamento
   useEffect(() => {
     const checkToken = async () => {
+      console.log('Chiamo /api/check_token per verificare il login...');
       try {
-        const storedUser = localStorage.getItem('user');
-        const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-
-        if (storedUser && storedIsLoggedIn === 'true') {
-          setUser(JSON.parse(storedUser));
-          setIsLoggedIn(true);
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetch('/api/check_token', {
+        const res = await fetch('http://localhost:3001/api/check_token', {
           credentials: 'include', // 🔥 invia cookie HttpOnly
         });
-
         if (res.ok) {
           const data = await res.json();
+          console.log('Risposta check_token:', data);
           setIsLoggedIn(true);
-          localStorage.setItem('nome_giornalista', data.giornalista.nome); // salva il nome nel local storage
-          localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem('isLoggedIn', 'true');
           setUser(data.user); // user deve arrivare dal backend come `req.user`
+          if (data.user?.nome) {
+            localStorage.setItem('nome_giornalista', data.user.nome); // salva solo il nome nel localStorage
+          }
         } else {
           setIsLoggedIn(false);
           setUser(null);
-          localStorage.removeItem('user');
-          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('nome_giornalista');
         }
       } catch (err) {
         console.error('Errore nel controllo del token:', err);
         setIsLoggedIn(false);
         setUser(null);
-        localStorage.removeItem('user');
-        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('nome_giornalista');
       } finally {
         setLoading(false);
       }
@@ -56,23 +45,23 @@ export const AuthProvider = ({ children }) => {
 
   // Funzione per login manuale (es. dopo un form)
   const login = (userData) => {
-    console.log('Login function called with:', userData); // Log aggiunto
     setIsLoggedIn(true);
     setUser(userData);
-    console.log('isLoggedIn updated to:', true); // Log aggiunto
-    console.log('User updated to:', userData); // Log aggiunto
+    if (userData?.nome) {
+      localStorage.setItem('nome_giornalista', userData.nome); // salva solo il nome
+    }
   };
 
   // Funzione di logout manuale
   const logout = () => {
-    // Se vuoi anche chiamare un endpoint /logout, puoi farlo qui
-    fetch('/api/logout', { credentials: 'include' }).catch(() => {});
+    fetch('http://localhost:3001/api/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     setIsLoggedIn(false);
     setUser(null);
+    localStorage.removeItem('nome_giornalista');
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, loading, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, loading, login, logout, setUser, setIsLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

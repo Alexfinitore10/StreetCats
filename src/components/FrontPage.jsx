@@ -5,32 +5,10 @@ import { useAuth } from './AuthContext';
 import Navbar from './NavBar';
 
 function FrontPage() {
+  const { isLoggedIn, user, loading } = useAuth();
 
-  const { isLoggedIn, user, setUser, setIsLoggedIn, loading, login, logout } = useAuth();
-
-
+  // Calcola il nome: prima dal context, poi da localStorage, infine fallback
   const nome = user?.nome || localStorage.getItem('nome_giornalista') || 'Utente';
-
-  useEffect(() => {
-    if (isLoggedIn && !user?.nome) {
-      fetch('http://localhost:3001/api/check_token', {
-        credentials: 'include',
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.user?.nome) {
-            localStorage.setItem('nome_giornalista', data.user.nome);
-          }
-          setIsLoggedIn(true);
-        })
-        .catch(error => console.error('Errore nel recupero del nome:', error));
-    }
-  }, [isLoggedIn, user]);
-
-  //console.log('AuthContext user:', user);
-  console.log('localStorage.getItem:', localStorage.getItem('nome_giornalista'));
-  console.log('Nome calcolato:', nome);
-  console.log('isLoggedIn:', isLoggedIn);
 
   const [articles, setArticles] = useState([]);
   const [farticles, fsetArticles] = useState(articles);
@@ -150,14 +128,14 @@ function FrontPage() {
   return (
     <div className="mx-auto flex flex-col items-center justify-center px-4 mb-8">
       <h1 className="text-5xl font-bold mb-6">
-                                            {selectedTag
-                                              ? `Articoli con tag: ${selectedTag}`
-                                              : isLoggedIn
-                                                ? nome
-                                                  ? `Benvenuto su PressPortal, ${nome}!`
-                                                  : 'Benvenuto su PressPortal'
-                                                : 'Benvenuto su PressPortal'}
-</h1>
+        {selectedTag
+          ? `Articoli con tag: ${selectedTag}`
+          : isLoggedIn
+            ? nome
+              ? `Benvenuto su PressPortal, ${nome}!`
+              : 'Benvenuto su PressPortal'
+            : 'Benvenuto su PressPortal'}
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {visibleArticles.map((article) => (
           <InteractiveCard
