@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import InteractiveCard from './Articles';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Navbar from './NavBar';
 
@@ -16,6 +16,7 @@ function FrontPage() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   //Backend fetch
   useEffect(() => {
@@ -59,6 +60,16 @@ function FrontPage() {
   const [selectedTag, setSelectedTag] = useState(null); // Nuovo stato per il tag selezionato
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 10;
+
+  // Leggi il parametro page dall'URL all'avvio e quando cambia
+  useEffect(() => {
+    const pageParam = parseInt(searchParams.get('page'));
+    if (!isNaN(pageParam) && pageParam > 0) {
+      setCurrentPage(pageParam);
+    } else {
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   const sortArticlesByDate = (articles) => {
     return articles.sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
@@ -107,8 +118,18 @@ function FrontPage() {
     setSelectedTag(tag);
   };
 
+  // Quando cambi pagina, aggiorna il parametro page nell'URL
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber); 
+    setCurrentPage(pageNumber);
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      if (pageNumber > 1) {
+        params.set('page', pageNumber);
+      } else {
+        params.delete('page');
+      }
+      return params;
+    });
   };
 
   const totalPages = selectedTag
