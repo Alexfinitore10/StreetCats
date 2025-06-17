@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
 
 function CreaArticoloComp() {
   const [titolo, setTitolo] = useState('');
@@ -9,9 +10,16 @@ function CreaArticoloComp() {
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isPreview, setIsPreview] = useState(false);
+  const [position, setPosition] = useState([41.9028, 12.4964]); // Posizione predefinita (Roma)
+  // Stato per la posizione temporanea selezionata sulla mappa
+  const [selectedPosition, setSelectedPosition] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Aggiorna la posizione con l'ultima selezionata, se presente
+    const finalPosition = selectedPosition || position;
+    setPosition(finalPosition);
 
     // Preparazione dei dati da inviare al backend
     const formData = new FormData();
@@ -23,6 +31,7 @@ function CreaArticoloComp() {
       formData.append('image', immagineCopertina);
     }
     formData.append('tags', tags.split(','));
+    formData.append('position', JSON.stringify(finalPosition));
 
     console.log('Dati articolo:', {
       title: titolo,
@@ -30,8 +39,10 @@ function CreaArticoloComp() {
       contenuto: contenuto,
       image: immagineCopertina ? immagineCopertina.name : null,
       publishedDate: publishedDate,
-      tags: tags
+      tags: tags,
+      position: position
     });
+    console.log('Invio posizione al backend:', finalPosition, JSON.stringify(finalPosition));
 
     // Esempio di invio dei dati al backend
     try {
@@ -53,6 +64,7 @@ function CreaArticoloComp() {
         setDescription('');
         setTags('');
         setPublishedDate(new Date().toISOString().split('T')[0]);
+        setPosition([41.9028, 12.4964]); // Resetta la posizione a Roma
       } else {
         const errorData = await response.json();
         alert(`Errore nella creazione dell'articolo: ${errorData.message}`);
@@ -62,6 +74,17 @@ function CreaArticoloComp() {
       alert('Errore durante l\'invio dei dati');
     }
   };
+
+  // Funzione per gestire il click sulla mappa
+  function handleMapClick(e) {
+    setSelectedPosition([e.latlng.lat, e.latlng.lng]);
+  }
+
+  // Componente per gestire il click sulla mappa
+  function ClickHandler() {
+    useMap().on('click', handleMapClick);
+    return null;
+  }
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-blue-200 rounded-lg shadow-md">
@@ -146,6 +169,29 @@ function CreaArticoloComp() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             required
           />
+        </div>
+        {/* Mappa per selezionare la posizione */}
+        <div className="my-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Seleziona la posizione sulla mappa</label>
+          <MapContainer center={selectedPosition || position} zoom={5} style={{ height: '300px', width: '100%' }} scrollWheelZoom={true}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <ClickHandler />
+            {(selectedPosition || position) && (
+              <Marker position={selectedPosition || position}>
+                <Popup>
+                  <span>Ultima posizione selezionata:<br/>Lat: {(selectedPosition || position)[0].toFixed(5)}, Lng: {(selectedPosition || position)[1].toFixed(5)}</span>
+                </Popup>
+              </Marker>
+            )}
+          </MapContainer>
+          <div className="mt-2">
+            <span className="text-sm">
+              Ultima posizione selezionata: {(selectedPosition || position)[0].toFixed(5)}, {(selectedPosition || position)[1].toFixed(5)}
+            </span>
+          </div>
         </div>
         <div>
           <button type="submit" className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">

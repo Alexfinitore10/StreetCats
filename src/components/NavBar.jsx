@@ -12,7 +12,7 @@ function Navbar({ resetState }) {
         <Link to='/about'>About</Link>
         <Link to='/contact'>Contact</Link>
         {isLoggedIn && <Link to='/creazione-utenza'>Creazione Utenza</Link>}
-        {isLoggedIn && <Link to='/pubblica-articolo'>Crea articolo</Link>}
+        {isLoggedIn && <Link to='/pubblica-post'>Crea articolo</Link>}
       </div>
       <div className='flex space-x-4 flex-col items-end'>
         {isLoggedIn ? (

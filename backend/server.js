@@ -143,11 +143,12 @@ app.post('/api/article', authenticateToken, upload.single('image'), async (req, 
   const filePath = req.file?.path; // Percorso del file salvato temporaneamente
   const session = driver.session();
   try {
-    const { title, description, publishedDate, contenuto, tags } = req.body;
+    const { title, description, publishedDate, contenuto, tags, position } = req.body;
     const authorName = req.user.nome; // Recupera il nome dell'autore dal token JWT
 
     console.log('Dati ricevuti:', req.body);
     console.log('Nome autore:', authorName); // Log per verificare il nome dell'autore
+    console.log('Posizione ricevuta dal frontend: ', position[0], position[1]); // Log per verificare la posizione
 
     let imageUrl = null;
     if (filePath) {
@@ -173,7 +174,8 @@ app.post('/api/article', authenticateToken, upload.single('image'), async (req, 
           contenuto: $contenuto,
           image: $image,
           tags: $tags,
-          author: $authorName
+          author: $authorName,
+          position: $position
         })
         RETURN a
         `,
@@ -186,6 +188,7 @@ app.post('/api/article', authenticateToken, upload.single('image'), async (req, 
           image: imageUrl,
           tags: tags.split(','),
           authorName,
+          position: JSON.parse(position)
         }
       );
     });
@@ -475,10 +478,11 @@ app.put('/api/articles/:id', authenticateToken, async (req, res) => {
             a.contenuto = COALESCE($contenuto, a.contenuto),
             a.tags = COALESCE($tags, a.tags),
             a.publishedDate = COALESCE($publishedDate, a.publishedDate),
-            a.lastEditDate = $lastEditDate
+            a.lastEditDate = $lastEditDate,
+            a.position = COALESCE(a.position, $position)
         RETURN a
         `,
-        { id: parseInt(id), title, description, contenuto, tags, publishedDate, lastEditDate }
+        { id: parseInt(id), title, description, contenuto, tags, publishedDate, lastEditDate, position: req.body.position }
       )
     );
 
@@ -536,7 +540,8 @@ app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) =
             a.contenuto = COALESCE($contenuto, a.contenuto),
             a.tags = COALESCE($tags, a.tags),
             a.publishedDate = COALESCE($publishedDate, a.publishedDate),
-            a.lastEditDate = $formatted
+            a.lastEditDate = $formatted,
+            a.position = COALESCE(a.position, $position)
         RETURN a
         `,
         { id: parseInt(id), title, description, contenuto, tags, publishedDate, formatted }
