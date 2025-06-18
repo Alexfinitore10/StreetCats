@@ -586,6 +586,53 @@ app.put('/api/change_password', authenticateToken, async (req, res) => {
   }
 });
 
+// Endpoint per recuperare i commenti di un articolo
+app.get('/api/articles/:id/comments', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const session = driver.session();
+  try {
+    const result = await session.executeRead(tx =>
+      tx.run(
+        `MATCH (c:Comment)-[:SU]->(a:Article {id: $id}) RETURN c ORDER BY c.createdAt ASC`,
+        { id: parseInt(id) }
+      )
+    );
+    const comments = result.records.map(r => r.get('c').properties);
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ message: 'Errore nel recupero dei commenti' });
+  } finally {
+    session.close();
+  }
+});
+
+// Endpoint per aggiungere un commento a un articolo
+app.post('/api/articles/:id/comment', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+  const author = req.user.nome;
+  const session = driver.session();
+  try {
+    const result = await session.executeWrite(tx =>
+      tx.run(
+        `MATCH (a:Article {id: $id})
+         CREATE (c:Comment {text: $text, author: $author, createdAt: datetime()})
+         CREATE (c)-[:SU]->(a)
+         RETURN c`,
+        { id: parseInt(id), text, author }
+      )
+    );
+    if (result.records.length === 0) {
+      return res.status(500).json({ message: 'Errore nella creazione del commento' });
+    }
+    res.status(201).json({ comment: result.records[0].get('c').properties });
+  } catch (error) {
+    res.status(500).json({ message: 'Errore nel salvataggio del commento' });
+  } finally {
+    session.close();
+  }
+});
+
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`)
 });

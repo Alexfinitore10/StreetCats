@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../components/AuthContext';
@@ -23,6 +23,51 @@ function ArticlePage() {
     : typeof tags === 'string'
     ? tags.split(',').map((tag) => tag.trim())
     : [];
+
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [loadingComments, setLoadingComments] = useState(true);
+  const [errorComments, setErrorComments] = useState(null);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      setLoadingComments(true);
+      setErrorComments(null);
+      try {
+        const response = await fetch(`http://localhost:3001/api/articles/${article.id}/comments`, {
+          credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Errore nel recupero dei commenti');
+        const data = await response.json();
+        setComments(data);
+      } catch (err) {
+        setErrorComments(err.message);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+    fetchComments();
+  }, [article.id]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    try {
+      const response = await fetch(`http://localhost:3001/api/articles/${article.id}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ text: commentText })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setComments([...comments, data.comment]);
+        setCommentText('');
+      }
+    } catch (err) {
+      alert('Errore nell\'invio del commento');
+    }
+  };
 
   if (!article) {
     return <p>Errore nel caricamento</p>;
@@ -95,6 +140,35 @@ function ArticlePage() {
           Modifica Articolo
         </button>
       )}
+
+      {/* Commenti */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-2">Commenti</h2>
+        {loadingComments && <p>Caricamento commenti...</p>}
+        {errorComments && <p className="text-red-500">{errorComments}</p>}
+        {!loadingComments && comments.length === 0 && <p>Nessun commento ancora.</p>}
+        {comments.map((c, i) => (
+          <div key={i} className="mb-2 p-2 bg-gray-100 rounded">
+            <strong>{c.author}</strong>: {c.text}
+            <div className="text-xs text-gray-500">{c.createdAt && new Date(c.createdAt).toLocaleString()}</div>
+          </div>
+        ))}
+        {user && (
+          <form onSubmit={handleCommentSubmit} className="mt-4 flex flex-col">
+            <textarea
+              value={commentText}
+              onChange={e => setCommentText(e.target.value)}
+              className="border rounded p-2 mb-2"
+              placeholder="Scrivi un commento..."
+              rows={2}
+              required
+            />
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 self-end">
+              Invia commento
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
