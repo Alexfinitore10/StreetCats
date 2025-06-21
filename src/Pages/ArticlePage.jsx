@@ -150,7 +150,12 @@ function ArticlePage() {
         {comments.map((c, i) => (
           <div key={i} className="mb-2 p-2 bg-gray-100 rounded">
             <strong>{c.author}</strong>: {c.text}
-            <div className="text-xs text-gray-500">{c.createdAt && new Date(c.createdAt).toLocaleString()}</div>
+            <div className="text-xs text-gray-500">
+              {(() => {
+                const d = new Date(c.createdAt);
+                return isNaN(d) ? "now" : d.toLocaleString();
+              })()}
+            </div>
           </div>
         ))}
         {user && (

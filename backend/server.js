@@ -597,7 +597,13 @@ app.get('/api/articles/:id/comments', authenticateToken, async (req, res) => {
         { id: parseInt(id) }
       )
     );
-    const comments = result.records.map(r => r.get('c').properties);
+    const comments = result.records.map(r => {
+      const c = r.get('c').properties;
+      if (c.createdAt && typeof c.createdAt === 'object' && c.createdAt.year) {
+        c.createdAt = `${c.createdAt.year}-${String(c.createdAt.month).padStart(2, '0')}-${String(c.createdAt.day).padStart(2, '0')}T${String(c.createdAt.hour).padStart(2, '0')}:${String(c.createdAt.minute).padStart(2, '0')}`;
+      }
+      return c;
+    });
     res.json(comments);
   } catch (error) {
     res.status(500).json({ message: 'Errore nel recupero dei commenti' });

@@ -1,200 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import InteractiveCard from './Articles';
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Navbar from './NavBar';
 
 function FrontPage() {
-  const { isLoggedIn, user, loading } = useAuth();
-
-  // Calcola il nome: prima dal context, poi da localStorage, infine fallback
-  const nome = user?.nome || localStorage.getItem('nome_giornalista') || 'Utente';
-
+  const { isLoggedIn, user } = useAuth();
   const [articles, setArticles] = useState([]);
-  const [farticles, fsetArticles] = useState(articles);
-  const [myArticles, setMyArticles] = useState([]);
-
-  const location = useLocation();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  //Backend fetch
   useEffect(() => {
     fetch('http://localhost:3001/api/articles')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-      })
-      .then(data => {
-        setArticles(data);
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-      });
+      .then(response => response.json())
+      .then(data => setArticles(data))
+      .catch(error => console.error('Errore fetch articoli:', error));
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetch('http://localhost:3001/api/my_articles', {
-        credentials: 'include',
-      })
-        .then(response => response.json())
-        .then(data => setMyArticles(data))
-        .catch(error => console.error('Errore nel recupero degli articoli:', error));
-    }
-  }, [isLoggedIn]);
-
-  const isMyArticle = (articleId) => {
-    if (!Array.isArray(myArticles)) {
-      console.error('myArticles non è un array:', myArticles);
-      return false;
-    }
-    return myArticles.some(article => article.id === articleId);
-  };
-
-  const [visibleArticles, setVisibleArticles] = useState([]);
-
-  //tag logic
-  const [selectedTag, setSelectedTag] = useState(null); // Nuovo stato per il tag selezionato
-  const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 10;
-
-  // Leggi il parametro page dall'URL all'avvio e quando cambia
-  useEffect(() => {
-    const pageParam = parseInt(searchParams.get('page'));
-    if (!isNaN(pageParam) && pageParam > 0) {
-      setCurrentPage(pageParam);
-    } else {
-      setCurrentPage(1);
-    }
-  }, [searchParams]);
-
-  const sortArticlesByDate = (articles) => {
-    return articles.sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate));
-  };
-
-  const resetStateFunction = () => {
-    setSelectedTag(null);
-    setCurrentPage(1);
-    const sortedArticles = sortArticlesByDate(articles); // AGGIUNTO: Ordina gli articoli all'inizio
-    setArticles(sortedArticles);
-    setVisibleArticles(sortedArticles.slice(0, 10));
-    fsetArticles(sortedArticles);
-  };
-
-  //tag logic
-  useEffect(() => {
-    if (selectedTag) {
-      const filtered = articles
-        .filter(article => article.tags.includes(selectedTag))
-        .sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate)); // Ordina gli articoli dal più recente al meno recente
-      fsetArticles(filtered);
-      setCurrentPage(1); // Resetta la pagina corrente quando viene selezionato un nuovo tag
-      setVisibleArticles(filtered.slice(0, articlesPerPage)); // Imposta le prime articoli filtrati visibili
-    } else {
-      fsetArticles([]);
-      setVisibleArticles(articles.slice(0, 10));
-    }
-  }, [selectedTag, articles]);
-
-  useEffect(() => {
-    if (selectedTag) {
-      const indexOfLastArticle = currentPage * articlesPerPage;
-      const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-      const currentArticles = farticles.slice(indexOfFirstArticle, indexOfLastArticle);
-      setVisibleArticles(currentArticles);
-    } else {
-      const indexOfLastArticle = currentPage * articlesPerPage;
-      const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-      const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
-      setVisibleArticles(currentArticles);
-    }
-  }, [selectedTag, farticles, currentPage, articlesPerPage, articles]);
-
-  const handleTagClick = (tag) => {
-    console.log(`Clicked on tag: ${tag}`);
-    setSelectedTag(tag);
-  };
-
-  // Quando cambi pagina, aggiorna il parametro page nell'URL
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
-      if (pageNumber > 1) {
-        params.set('page', pageNumber);
-      } else {
-        params.delete('page');
-      }
-      return params;
-    });
-  };
-
-  const totalPages = selectedTag
-    ? Math.ceil(farticles.length / articlesPerPage)
-    : Math.ceil(articles.length / articlesPerPage);
-
-  const handleCardClick = (article) => {
-    navigate(`/articolo/${article.id}`, { state: article });
-  };
-
-  useEffect(() => {
-    if (location.pathname === '/home') {
-      resetStateFunction();
-    }
-  }, [location.pathname, articles]);
+  // Filtra solo articoli con posizione valida (array di 2 numeri)
+  const articlesWithPosition = articles.filter(
+    a => Array.isArray(a.position) && a.position.length === 2 &&
+      typeof a.position[0] === 'number' && typeof a.position[1] === 'number'
+  );
 
   return (
-    <div className="mx-auto flex flex-col items-center justify-center px-4 mb-8">
-      <h1 className="text-5xl font-bold mb-6">
-        {selectedTag
-          ? `Articoli con tag: ${selectedTag}`
-          : isLoggedIn
-            ? nome
-              ? `Benvenuto su PressPortal, ${nome}!`
-              : 'Benvenuto su PressPortal'
-            : 'Benvenuto su PressPortal'}
+    <div className="mx-auto flex flex-col items-center justify-center px-4 mb-8 w-full">
+      <h1 className="text-5xl font-bold mb-6 text-center">
+        StreetCats: Mappa dei Gatti
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {visibleArticles.map((article) => (
-          <InteractiveCard
-            key={article.id}
-            articleId={article.id}
-            image={article.image}
-            title={article.title}
-            description={article.description}
-            publishedDate={article.publishedDate}
-            bodyPreview={article.bodyPreview}
-            author={article.author}
-            tags={article.tags}
-            onTagClick={handleTagClick}
-            onCardClick={() => handleCardClick(article)}
-            isMyArticle={isMyArticle(article.id)} // Passa se è un articolo del giornalista
+      <div className="w-full max-w-4xl mx-auto" style={{ height: '600px' }}>
+        <MapContainer center={[41.9028, 12.4964]} zoom={5} style={{ height: '100%', width: '100%' }} scrollWheelZoom={true}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-        ))}
+          {articlesWithPosition.map(article => (
+            <Marker
+              key={article.id}
+              position={article.position}
+              eventHandlers={{
+                click: () => navigate(`/articolo/${article.id}`, { state: article })
+              }}
+            >
+              <Popup>
+                <div className="text-center">
+                  <strong>{article.title}</strong><br />
+                  {article.description}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
-      {totalPages > 1 && (
-        <div className="mt-6 mb-6">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className={`bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={currentPage === 1}
-          >
-            Precedente
-          </button>
-          <span className="mx-2">Pagina {currentPage} di {totalPages}</span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className={`bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm cursor-pointer hover:bg-gray-800 hover:text-white transition-colors duration-200 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={currentPage === totalPages}
-          >
-            Successivo
-          </button>
-        </div>
-      )}
+      <div className="mt-6 text-gray-600 text-center">
+        {articlesWithPosition.length === 0 && 'Nessun gatto con posizione sulla mappa.'}
+      </div>
     </div>
   );
 }
+
 export default FrontPage;
