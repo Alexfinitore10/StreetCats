@@ -173,6 +173,9 @@ function ArticlePage() {
             </button>
           </form>
         )}
+        {!user && (
+          <div className="mt-4 text-gray-500 italic">Effettua il login per commentare.</div>
+        )}
       </div>
     </div>
   );

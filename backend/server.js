@@ -587,7 +587,7 @@ app.put('/api/change_password', authenticateToken, async (req, res) => {
 });
 
 // Endpoint per recuperare i commenti di un articolo
-app.get('/api/articles/:id/comments', authenticateToken, async (req, res) => {
+app.get('/api/articles/:id/comments', async (req, res) => {
   const { id } = req.params;
   const session = driver.session();
   try {
