@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
 function ModificaArticolo() {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ function ModificaArticolo() {
   const [publishedDate, setPublishedDate] = useState('');
   const [isPreview, setIsPreview] = useState(false);
   const [article, setArticle] = useState(null);
-
+  const [position, setPosition] = useState(null); // Stato posizione
+  const [selectedPosition, setSelectedPosition] = useState(null); // Per la posizione scelta sulla mappa
 
   useEffect(() => {
     console.log('Location state:', location.state);
@@ -20,20 +22,30 @@ function ModificaArticolo() {
     console.log('id dell\'articolo:', location.state ? location.state.id : 'Nessun ID'); // Debug log
     // Debug log
     if (location.state) {
-      
-
       setArticle(location.state.id);
       setTitolo(location.state.title);
       setContenuto(location.state.contenuto);
       setDescription(location.state.description);
       setTags(Array.isArray(location.state.tags) ? location.state.tags.join(',') : location.state.tags);
       setPublishedDate(location.state.publishedDate);
+      if (Array.isArray(location.state.position) && location.state.position.length === 2) {
+        setPosition(location.state.position);
+      }
     } else {
       console.log('Nessun dato articolo trovato in location.state'); // Debug log
       alert('Errore: dati dell\'articolo non trovati');
       navigate('/home');
     }
   }, [location.state]);
+
+  // Gestore click sulla mappa
+  function handleMapClick(e) {
+    setSelectedPosition([e.latlng.lat, e.latlng.lng]);
+  }
+  function ClickHandler() {
+    useMap().on('click', handleMapClick);
+    return null;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +56,8 @@ function ModificaArticolo() {
       description,
       contenuto,
       tags: tags.split(','),
-      publishedDate
+      publishedDate,
+      position: JSON.stringify(selectedPosition || position) // Invia la posizione aggiornata
     };
 
     try {
@@ -152,6 +165,30 @@ function ModificaArticolo() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             required
           />
+        </div>
+
+        {/* Mappa per modificare la posizione */}
+        <div className="my-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Modifica la posizione sulla mappa</label>
+          <MapContainer center={selectedPosition || position || [41.9028, 12.4964]} zoom={5} style={{ height: '300px', width: '100%' }} scrollWheelZoom={true}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <ClickHandler />
+            {(selectedPosition || position) && (
+              <Marker position={selectedPosition || position}>
+                <Popup>
+                  <span>Nuova posizione selezionata:<br/>Lat: {(selectedPosition || position)[0].toFixed(5)}, Lng: {(selectedPosition || position)[1].toFixed(5)}</span>
+                </Popup>
+              </Marker>
+            )}
+          </MapContainer>
+          <div className="mt-2">
+            <span className="text-sm">
+              Nuova posizione selezionata: {(selectedPosition || position) ? `${(selectedPosition || position)[0].toFixed(5)}, ${(selectedPosition || position)[1].toFixed(5)}` : 'Nessuna'}
+            </span>
+          </div>
         </div>
 
         <div>

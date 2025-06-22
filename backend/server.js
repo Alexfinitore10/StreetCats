@@ -499,21 +499,22 @@ app.put('/api/articles/:id', authenticateToken, async (req, res) => {
 
 // Endpoint per modificare un articolo
 app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) => {
-  const { id, title, description, contenuto, tags, publishedDate } = req.body;
+  const { id, title, description, contenuto, tags, publishedDate, position } = req.body; // aggiungi position
   const lastEditDate = new Date().toISOString(); // Data dell'ultima modifica
 
   const formatted = new Date(lastEditDate).toLocaleString('it-IT', 
     {
       day:    '2-digit',
-    month:  '2-digit',
-    year:   'numeric',
-    hour:     '2-digit',
-    minute:   '2-digit'
+      month:  '2-digit',
+      year:   'numeric',
+      hour:     '2-digit',
+      minute:   '2-digit'
     });
 
   console.log('ID ricevuto:', id); // Log per verificare l'ID
   console.log('Utente autenticato:', req.user.nome); // Log per verificare l'utente autenticato
   console.log('data ultima modifica:', formatted); // Log per verificare la data dell'ultima modifica
+  console.log('Posizione ricevuta:', position); // Log per verificare la posizione
 
   try {
     // Verifica che l'articolo esista e appartenga all'utente autenticato
@@ -530,7 +531,7 @@ app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) =
       return res.status(403).json({ message: 'Non sei autorizzato a modificare questo articolo o non esiste.' });
     }
 
-    // Aggiorna l'articolo
+    // Aggiorna l'articolo, gestendo la posizione
     const result = await session.executeWrite(tx =>
       tx.run(
         `
@@ -541,10 +542,19 @@ app.put('/api/articles/modifyarticle/:id', authenticateToken, async (req, res) =
             a.tags = COALESCE($tags, a.tags),
             a.publishedDate = COALESCE($publishedDate, a.publishedDate),
             a.lastEditDate = $formatted,
-            a.position = COALESCE(a.position, $position)
+            a.position = COALESCE($parsedPosition, a.position)
         RETURN a
         `,
-        { id: parseInt(id), title, description, contenuto, tags, publishedDate, formatted }
+        {
+          id: parseInt(id),
+          title,
+          description,
+          contenuto,
+          tags,
+          publishedDate,
+          formatted,
+          parsedPosition: position ? JSON.parse(position) : null
+        }
       )
     );
 
