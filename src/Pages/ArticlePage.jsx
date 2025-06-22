@@ -143,6 +143,21 @@ function ArticlePage() {
 
       {/* Commenti */}
       <div className="mt-8">
+      {user && (
+          <form onSubmit={handleCommentSubmit} className="mt-4 flex flex-col">
+            <textarea
+              value={commentText}
+              onChange={e => setCommentText(e.target.value)}
+              className="border rounded p-2 mb-2"
+              placeholder="Scrivi un commento..."
+              rows={2}
+              required
+            />
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 self-end">
+              Invia commento
+            </button>
+          </form>
+        )}
         <h2 className="text-xl font-bold mb-2">Commenti</h2>
         {loadingComments && <p>Caricamento commenti...</p>}
         {errorComments && <p className="text-red-500">{errorComments}</p>}
@@ -158,21 +173,7 @@ function ArticlePage() {
             </div>
           </div>
         ))}
-        {user && (
-          <form onSubmit={handleCommentSubmit} className="mt-4 flex flex-col">
-            <textarea
-              value={commentText}
-              onChange={e => setCommentText(e.target.value)}
-              className="border rounded p-2 mb-2"
-              placeholder="Scrivi un commento..."
-              rows={2}
-              required
-            />
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 self-end">
-              Invia commento
-            </button>
-          </form>
-        )}
+        
         {!user && (
           <div className="mt-4 text-gray-500 italic">Effettua il login per commentare.</div>
         )}

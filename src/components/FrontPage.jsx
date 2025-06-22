@@ -37,14 +37,21 @@ function FrontPage() {
             <Marker
               key={article.id}
               position={article.position}
-              eventHandlers={{
-                click: () => navigate(`/articolo/${article.id}`, { state: article })
-              }}
             >
               <Popup>
                 <div className="text-center">
-                  <strong>{article.title}</strong><br />
-                  {article.description}
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', margin: '0 auto' }}
+                    onClick={() => navigate(`/articolo/${article.id}`, { state: article })}
+                  />
+                  <div
+                    className="font-bold text-lg mt-2 cursor-pointer hover:underline"
+                    onClick={() => navigate(`/articolo/${article.id}`, { state: article })}
+                  >
+                    {article.title}
+                  </div>
                 </div>
               </Popup>
             </Marker>
