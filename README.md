@@ -1,6 +1,6 @@
-# PressPortal
+# StreetCats
 
-Benvenuti in **PressPortal**, un'applicazione fullstack progettata per creare e gestire il sito di una testata giornalistica. Questo progetto universitario mira all'apprendimento e all'utilizzo di tecnologie allo stato dell'arte per un'applicazione Full-Stack.
+Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e gestire il sito per l'avvistamento di gatti randagi. Questo progetto universitario mira all'apprendimento e all'utilizzo di tecnologie allo stato dell'arte per un'applicazione Full-Stack.
 
 ## Progresso del progetto
 
@@ -17,47 +17,75 @@ Benvenuti in **PressPortal**, un'applicazione fullstack progettata per creare e 
 - **React**: Libreria JavaScript per la costruzione di interfacce utente.
 - **Vite**: Un build tool di nuova generazione che offre un'esperienza di sviluppo veloce e ottimizzata.
 - **Tailwind CSS**: Framework di utilità per uno stile rapido e reattivo.
+- **Cypress** : A framework for E2E testing of the FrontEnd
 
 ### Backend
 - **Node.js**: Ambiente di runtime JavaScript che permette di eseguire codice sul lato server.
+- **Express.js** : A framework to make API Callable functions for Frontend
+- **Javascript** : A Programming language for Backend Development
+
+### Database
+- **Neo4J** : A graph database relationships based
 
 ## Struttura del Progetto
 
 La struttura del progetto è organizzata come segue allo stato attuale:
 ```
-PressPortal/
+StreetCats/
+├── backend/
+├── cypress/
 ├── public/
+│   ├── favicon.ico
+│   └── …  
 ├── src/
-│ ├── assets/
-│ ├── components/
-│ ├── pages/
-│ ├── App.jsx
-│ ├── index.jsx
-│ └── main.jsx
+│   ├── assets/
+│   ├── components/
+│   ├── views/
+│   ├── App.vue
+│   └── main.js
 ├── .eslintrc.cjs
 ├── .gitignore
+├── README.md
+├── ZKZg.gif
+├── cypress.config.js
 ├── index.html
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.js
 ├── tailwind.config.js
 └── vite.config.js
+
 ```
 
 ## Requisiti
 
+### OS
+- Windows 10+ (non testato) / macOS 10+ (non testato) / Linux (Developed on ArchLinux kernel 6.15)
+
+### Package Managers
 - Node.js v14 o superiore
 - npm (Node Package Manager) o yarn
+
+### FrontEnd
+- Vite > 3.0
+
+### Testing
+- Cypress > 12.0
+- Chromium Browser (Tested)
+- Firefox Browser (Tested)
+
+### Database
+- Neo4j Desktop
 
 ## Installazione
 
 1. **Clona il repository:**
 
    ```bash
-   git clone https://github.com/Alexfinitore10/PressPortal.git
-   cd PressPortal
+   git clone https://github.com/Alexfinitore10/StreetCats.git
+   cd StreetCats
 
-2. **Installa le dipendenze:**
+2. **Installa le dipendenze per il front-end:**
    ```bash
    npm install
    ```
@@ -68,12 +96,22 @@ PressPortal/
    cp .env.example .env
    ```
 ## Esecuzione
-1. **Avvia l'applicazione:**
+1. **Avvia l'applicazione front end:**
+
    ```bash
    npm run dev
    ```
    
-3. **Indirizzo di default**
+2. **Avvia l'applicazione back end:**
+
+   ```bash
+   cd backend
+   node server.js
+   ```
+3. **Avvia il database**
+   - Avvia Neo4j
+   
+4. **Indirizzo di default**
 
    L'applicazione sarà accessibile all'indirizzo: [http://localhost:5173](http://localhost:5173)
 
