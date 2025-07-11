@@ -3,6 +3,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../components/AuthContext';
 import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
+import Navbar from '../components/NavBar';
 
 
 function ArticlePage() {
@@ -74,6 +75,8 @@ function ArticlePage() {
   }
 
   return (
+    <>
+    <Navbar />
     <div className="p-6">
       <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
       <img
@@ -179,6 +182,7 @@ function ArticlePage() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

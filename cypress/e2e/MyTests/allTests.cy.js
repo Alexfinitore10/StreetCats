@@ -1,0 +1,11 @@
+import './change-password.cy';
+import './Create_Cat.cy';
+import './log-in-log-out.cy';
+import './login.cy';
+import './LogInError.cy';
+import './Modify-article.cy';
+import './Modify-article.cy';
+import './Not-logged-comment-to-logged-comment.cy';
+import './postcomment.cy';
+import './registeruser.cy';
+import './Register-error.cy';

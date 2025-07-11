@@ -41,6 +41,7 @@ function FrontPage() {
               <Popup>
                 <div className="text-center">
                   <img
+                    class="test-foto"
                     src={article.image}
                     alt={article.title}
                     style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', cursor: 'pointer', margin: '0 auto' }}
