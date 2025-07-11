@@ -9,6 +9,8 @@ const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 const cookieParser = require('cookie-parser');
 
+//TODO Aggiustare il fatto che le email possono essere duplicate
+
 
 
 const PORT = process.env.PORT || 3001; // Usa la variabile d'ambiente PORT o il valore predefinito 3001

@@ -31,28 +31,38 @@ function CambiaPassword() {
 
   return (
     <>
-      <NavBar />
-      <div className="max-w-md mx-auto mt-10 p-6 bg-blue-200 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center bg-blue-100 p-4 rounded">Cambia Password</h2>
-        <form onSubmit={handleChangePassword} className="space-y-4 bg-blue-100 p-4 rounded">
-          <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">Nuova Password</label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            />
+  <NavBar />
+  <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-6">
+    <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-blue-200 p-8 space-y-6">
+      <h2 className="text-3xl font-extrabold text-blue-800 text-center">Cambia Password</h2>
+      <form onSubmit={handleChangePassword} className="space-y-6">
+        <div className="space-y-1">
+          <label htmlFor="newPassword" className="block text-blue-800 font-medium">Nuova Password *</label>
+          <input
+            type="password"
+            id="newPassword"
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
+            required
+            className="w-full px-4 py-3 bg-white border border-blue-300 rounded-xl placeholder-blue-400 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            placeholder="Inserisci la nuova password"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-3 bg-gradient-to-r from-blue-400 to-blue-500 text-white font-semibold rounded-xl hover:from-blue-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition shadow-md"
+        >
+          Cambia password
+        </button>
+        {message && (
+          <div className="mt-2 text-center text-red-600 font-medium">
+            {message}
           </div>
-          <button type="submit" className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-            Cambia password
-          </button>
-          {message && <div className="mt-2 text-center text-red-600">{message}</div>}
-        </form>
-      </div>
-    </>
+        )}
+      </form>
+    </div>
+  </div>
+</>
   );
 }
 

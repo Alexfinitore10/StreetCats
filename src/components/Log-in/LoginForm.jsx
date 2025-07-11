@@ -54,54 +54,78 @@ function LoginForm() {
     };
 
     return (
-        <>
-            <div className="bg-slate-200 bg-gradient-to-r to-transparent flex-col justify-evenly rounded-xl">
-                <div>
-                    Login
-                </div>
-                <div className="p-10 bg-[#93c0f7] flex flex-col">
-                    <div>
-                        Email
-                    </div>
-                    <div>
-                        <input
-                            className="rounded-sm"
-                            type="text"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        Password
-                    </div>
-                    <div>
-                        <input
-                            className="rounded-sm"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                </div>
-                <div className="bg-slate-100 rounded-lg">
-                    <form onSubmit={handleSubmit}>
-                        <button type="submit" className="hover:bg-slate-500 hover:text-slate-100">
-                            Submit
-                        </button>
-                    </form>
-                </div>
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md w-full space-y-8">
+            {/* Header */}
+            <div className="text-center">
+              <div className="text-6xl mb-4">🐱</div>
+              <h2 className="text-3xl font-bold text-white mb-2">Accedi a StreetCats</h2>
+              <p className="text-white/70 text-lg">Bentornato! Accedi per continuare</p>
             </div>
-            <div>
-                <p>
-                    Non sei ancora registrato? Clicca{" "}
-                    <Link className="text-red-700" to="/register">
-                        qui
-                    </Link>{" "}
-                    per registrarti
+      
+            {/* Form Container */}
+            <div className="bg-white/20 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email Field */}
+                <div className="space-y-2">
+                  <label className="block text-gray-800 font-semibold text-lg">Email</label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </div>
+                </div>
+      
+                {/* Password Field */}
+                <div className="space-y-2">
+                  <label className="block text-gray-800 font-semibold text-lg">Password</label>
+                  <div className="relative">
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                      placeholder="********"
+                      required
+                    />
+                  </div>
+                </div>
+      
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full flex justify-center items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+                >
+                  Accedi
+                </button>
+              </form>
+      
+              {/* Register Link */}
+              <div className="mt-8 text-center">
+                <p className="text-white/70">
+                  Non hai un account?{' '}
+                  <Link
+                    to="/register"
+                    className="text-blue-300 hover:text-blue-200 font-semibold hover:underline"
+                  >
+                    Registrati
+                  </Link>
                 </p>
+              </div>
             </div>
-        </>
-    );
+      
+            {/* Footer */}
+            <div className="text-center text-white/50 text-sm">
+              <p>Accedendo accetti i nostri termini di servizio</p>
+            </div>
+          </div>
+        </div>
+    );  
 }
 
 export default LoginForm;
