@@ -1,5 +1,5 @@
 //Backend ServerJS
-//For Rest Operations and Server Mantenance
+
 require('dotenv').config();
 const bcrypt = require("bcrypt");
 const express = require("express");
@@ -9,8 +9,8 @@ const path = require('path');
 const upload = multer({ dest: 'uploads/' });
 const cookieParser = require('cookie-parser');
 
-//TODO Aggiustare il fatto che le email possono essere duplicate
-
+//import { v2 as cloudinary } from 'cloudinary';
+const cloudinary = require('cloudinary').v2;
 
 
 const PORT = process.env.PORT || 3001; // Usa la variabile d'ambiente PORT o il valore predefinito 3001
@@ -37,13 +37,14 @@ app.use(express.urlencoded({ extended: true }));
 
 //JWT
 const jwt = require("jsonwebtoken");
+const { use } = require('react');
 //Token
 const secretKey = process.env.JWT_SECRET
 
 const ImgurclientId = process.env.IMGUR_CLIENT_ID;//imgur client id
 const imgurUrl = 'https://api.imgur.com/3/upload';
 
-//Image Upload
+//Image Upload -- Imgur to be removed deprecated
 async function uploadToImgur(imagePath) {
 
   try {
@@ -69,6 +70,32 @@ async function uploadToImgur(imagePath) {
       console.error('Errore durante il caricamento su Imgur:', error.message);
       throw error;
   }
+}
+
+//new Image Upload
+async function uploadImageToCloudinary(imagePath) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+
+    // image upload con compressione automatica
+    const result = await cloudinary.uploader
+      .upload(imagePath, {
+        public_id: 'fotogatti',
+        use_filename: true,
+        unique_filename: false,
+        quality: 'auto:good',
+        fetch_format: 'auto',
+      }).catch((error) => {
+        console.error('Errore durante il caricamento su Cloudinary:', error.message);
+      });
+
+    console.log(result);
+    const imageUrl = result.secure_url; // Ottieni l'URL sicuro dell'immagine caricata
+    console.log('Immagine caricata con successo su Cloudinary:', imageUrl);
+    return imageUrl;
 }
 
 //Hash Function
@@ -155,7 +182,8 @@ app.post('/api/article', authenticateToken, upload.single('image'), async (req, 
     let imageUrl = null;
     if (filePath) {
       // Invia il file a Imgur
-      imageUrl = await uploadToImgur(filePath);
+      //imageUrl = await uploadToImgur(filePath);
+      imageUrl = await uploadImageToCloudinary(filePath);
     }
 
     const result = await session.executeWrite(async (tx) => {
