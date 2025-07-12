@@ -99,7 +99,7 @@ StreetCats/
    ```
 ## Esecuzione
 1. **Avvia l'applicazione front end:**
-   Posizionati nella directory del frontend :
+   Nella directory ' StreetCats/ ' :
    ```bash
    npm run dev
    ```
