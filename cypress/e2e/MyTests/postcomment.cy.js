@@ -5,18 +5,20 @@ describe('template spec', () => {
 
     /* ==== End Cypress Studio ==== */
     /* ==== Generated with Cypress Studio ==== */
-    cy.get('.justify-between > .flex > a').click();
-    cy.get('.p-10 > :nth-child(1)').click();
-    cy.get(':nth-child(2) > .rounded-sm').clear('a');
-    cy.get(':nth-child(2) > .rounded-sm').type('alexciacciarella@gmail.com');
-    cy.get(':nth-child(4) > .rounded-sm').clear();
-    cy.get(':nth-child(4) > .rounded-sm').type('123');
-    cy.get('.hover\\:bg-slate-500').click();
-    cy.get('[href="/home"]').click();
-    cy.get('[style="margin-left: -12px; margin-top: -41px; width: 25px; height: 41px; transform: translate3d(370px, 175px, 0px); z-index: 175;"]').click();
-    cy.get('.text-center > img').click();
-    cy.get('.border').click().type('Test Commento');
-    cy.get('.bg-blue-500').click();
+    /* ==== End Cypress Studio ==== */
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get('.bg-\\[var\\(--primary-blue\\)\\]').click();
+    cy.get(':nth-child(1) > .relative > .w-full').clear('a');
+    cy.get(':nth-child(1) > .relative > .w-full').type('alexciacciarella@gmail.com');
+    cy.get(':nth-child(2) > .relative > .w-full').clear();
+    cy.get(':nth-child(2) > .relative > .w-full').type('123');
+    cy.get('.space-y-6 > .flex').click();
+    cy.get('.text-2xl').click();
+    cy.get('[style="margin-left: -12px; margin-top: -41px; width: 25px; height: 41px; transform: translate3d(408px, 121px, 0px); z-index: 121;"]').click();
+    cy.get('.leaflet-popup-content > .text-center > .font-bold').click();
+    cy.get('.mt-12 > .flex > .w-full').type("Bello!");
+    cy.get('.bg-gradient-to-r').click();
+    cy.get('.mb-3').should('exist').and('contain', 'Bello!');
     /* ==== End Cypress Studio ==== */
   })
 })

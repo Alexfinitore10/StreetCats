@@ -335,6 +335,15 @@ app.post('/api/create_giornalista', async (req, res) => {
   const session = driver.session();
 
   try {
+    // Controlla se esiste già un giornalista con la stessa email
+    const checkResult = await session.executeRead(tx =>
+      tx.run('MATCH (g:Giornalista {email: $email}) RETURN g', { email })
+    );
+    if (checkResult.records.length > 0) {
+      console.log('❌ Email già registrata, return 409');
+      return res.status(409).json({ success: false, message: 'Questa email è già registrata. Scegli un\'altra email.' });
+    }
+
     const hashed = await hashPassword(password);
     const result = await session.executeWrite(tx =>
       tx.run(
@@ -650,6 +659,39 @@ app.post('/api/articles/:id/comment', authenticateToken, async (req, res) => {
     session.close();
   }
 });
+
+// Vincolo di unicità sull'email dei giornalisti
+async function ensureGiornalistaEmailUniqueConstraint() {
+  const session = driver.session();
+  try {
+    await session.run(`CREATE CONSTRAINT giornalista_email_unique IF NOT EXISTS FOR (g:Giornalista) REQUIRE g.email IS UNIQUE`);
+    console.log('Vincolo di unicità su Giornalista.email applicato (o già esistente).');
+  } catch (err) {
+    console.error('Errore nell\'applicazione del vincolo di unicità su Giornalista.email:', err.message);
+  } finally {
+    await session.close();
+  }
+}
+
+// Funzione per testare la connessione a Neo4j
+async function testNeo4jConnection() {
+  const session = driver.session();
+  try {
+    await session.run('RETURN 1 AS test');
+    console.log('Connessione a Neo4j OK!');
+  } catch (err) {
+    console.error('Errore di connessione a Neo4j:', err.message);
+    process.exit(1); // Esci se la connessione fallisce
+  } finally {
+    await session.close();
+  }
+}
+
+// Testa la connessione prima di avviare il server e applicare il vincolo
+(async () => {
+  await testNeo4jConnection();
+  await ensureGiornalistaEmailUniqueConstraint();
+})();
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`)

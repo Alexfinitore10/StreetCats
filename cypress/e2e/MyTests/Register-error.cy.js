@@ -3,42 +3,44 @@ describe('template spec', () => {
     cy.visit('http://localhost:5173/')
 
     /* ==== Generated with Cypress Studio ==== */
-    cy.get('.justify-between > .flex > a').click();
-    cy.get('.text-red-700').click();
-    cy.get(':nth-child(2) > .w-full').clear('P');
-    cy.get(':nth-child(2) > .w-full').type('Prova');
-    cy.get(':nth-child(3) > .w-full').clear();
-    cy.get(':nth-child(3) > .w-full').type('Test');
-    cy.get(':nth-child(4) > .w-full').clear();
-    cy.get(':nth-child(4) > .w-full').type('prova@mail.com');
-    cy.get(':nth-child(5) > .w-full').clear();
-    cy.get('.px-4').click();
-    cy.get(':nth-child(2) > .w-full').clear('P');
-    cy.get(':nth-child(2) > .w-full').type('Prova');
-    cy.get('.px-4').click();
-    cy.get(':nth-child(4) > .w-full').clear('al');
-    cy.get(':nth-child(4) > .w-full').type('alex');
-    cy.get('.px-4').click();
-    cy.get('.px-4').click();
-    cy.get(':nth-child(4) > .w-full').clear('alex@');
-    cy.get(':nth-child(4) > .w-full').type('alex@');
-    cy.get('.px-4').click();
-    cy.get(':nth-child(4) > .w-full').clear('alex@l');
-    cy.get(':nth-child(4) > .w-full').type('alex@live.');
-    cy.get(':nth-child(4) > .w-full').click();
-    cy.get(':nth-child(5) > .w-full').clear('c');
-    cy.get(':nth-child(5) > .w-full').type('123');
-    cy.get('.px-4').click();
-    cy.get(':nth-child(4) > .w-full').clear('alex@live.c');
-    cy.get(':nth-child(4) > .w-full').type('alex@live.com');
-    cy.get('.px-4').click();
-    cy.get('.justify-between > .flex > a').click();
-    cy.get(':nth-child(2) > .rounded-sm').clear('al');
-    cy.get(':nth-child(2) > .rounded-sm').type('alex@live.com');
-    cy.get(':nth-child(4) > .rounded-sm').clear('1');
-    cy.get(':nth-child(4) > .rounded-sm').type('123');
-    cy.get('.hover\\:bg-slate-500').click();
-    cy.get('.text-red-600').click();
+    cy.get('.bg-\\[var\\(--primary-blue\\)\\]').click();
+
+    /* ==== End Cypress Studio ==== */
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get('.text-blue-300').click();
+    cy.get(':nth-child(1) > .relative > .w-full').clear('al');
+    cy.get(':nth-child(1) > .relative > .w-full').type('alex');
+    cy.get(':nth-child(2) > .relative > .w-full').click();
+    cy.get(':nth-child(3) > .relative > .w-full').clear('al');
+    cy.get(':nth-child(3) > .relative > .w-full').type('alexnc@');
+    cy.get(':nth-child(4) > .relative > .w-full').clear('12');
+    cy.get(':nth-child(4) > .relative > .w-full').type('12prova');
+    cy.get('.space-y-6 > .justify-center > span').click();
+    cy.get('.bg-white\\/20').click();
+    cy.get(':nth-child(3) > .relative > .w-full').click();
+    cy.get('.bg-white\\/20').click();
+    cy.get('.space-y-6 > .justify-center > span').click();
+    cy.get(':nth-child(1) > .relative > .w-full').clear('a');
+    cy.get(':nth-child(1) > .relative > .w-full').type('aaaaa');
+    cy.get('.space-y-6 > .justify-center > span').click();
+    cy.get(':nth-child(3) > .relative > .w-full').clear('p');
+    cy.get('.space-y-6 > .justify-center > span').click();
+    /* ==== End Cypress Studio ==== */
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get(':nth-child(3) > .relative > .w-full').clear();
+    cy.get(':nth-child(3) > .relative > .w-full').type('ale @.com{enter}');
+    cy.get('.space-y-6 > .justify-center').click();
+    cy.get(':nth-child(3) > .relative > .w-full').clear();
+    cy.get(':nth-child(3) > .relative > .w-full').type('ale@slk{enter}');
+    cy.get('.space-y-6 > .justify-center').click();
+    cy.get('.bg-red-500\\/20 > .flex').should('exist').and('contain', 'Email non valida');
+    /* ==== End Cypress Studio ==== */
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get('.bg-white\\/20').click();
+    cy.get(':nth-child(4) > .relative > .w-full').clear();
+    cy.get(':nth-child(4) > .relative > .w-full').type('alexciacciarella@gmail.com');
+    cy.get('.space-y-6 > .justify-center > span').click();
+    cy.get('.swal2-confirm').click();
     /* ==== End Cypress Studio ==== */
   })
 })

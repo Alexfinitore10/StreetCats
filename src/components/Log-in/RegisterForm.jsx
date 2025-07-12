@@ -18,6 +18,16 @@ function RegisterForm() {
     setError("");
     setIsLoading(true);
 
+    //checkemail
+    const emailRegex = /^\S+@\S+(\.\S{2,})+$/;
+
+    if (!emailRegex.test(email)) {
+      setError("Email non valida! Assicurati di usare un dominio corretto (es. nome@esempio.com).");
+      setIsLoading(false);
+      return; // esci prima di fare la fetch
+    }
+
+
     const payload = { 
       nome, 
       email, 
@@ -36,20 +46,42 @@ function RegisterForm() {
 
       const data = await res.json();
 
-      
-    await Swal.fire({
-      icon: 'success',
-      title: 'Registrazione completata',
-      text: 'Effettua ora il login'
-    });
+      if (res.status === 409) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Email già registrata',
+          text: data.message || 'Questa email è già presente. Scegli un\'altra email.'
+        });
+        setIsLoading(false);
+        return;
+      }
 
-    navigate("/login", { 
-      state: { message: "Registrazione avvenuta con successo! Effettua il login." }
-    });
+      if (!data.success) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Errore',
+          text: data.message || 'Errore durante la registrazione.'
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      await Swal.fire({
+        icon: 'success',
+        title: 'Registrazione completata',
+        text: 'Effettua ora il login'
+      });
+      navigate("/login", { 
+        state: { message: "Registrazione avvenuta con successo! Effettua il login." }
+      });
 
     } catch (error) {
       console.error("Error during registration:", error);
-      setError("Errore durante la registrazione");
+      await Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: 'Errore durante la registrazione.'
+      });
       setIsLoading(false);
     }
   };
