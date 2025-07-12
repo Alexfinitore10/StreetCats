@@ -20,9 +20,19 @@ Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e g
 - **Cypress** : A framework for E2E testing of the FrontEnd
 
 ### Backend
-- **Node.js**: Ambiente di runtime JavaScript che permette di eseguire codice sul lato server.
-- **Express.js** : A framework to make API Callable functions for Frontend
-- **Javascript** : A Programming language for Backend Development
+- **Node.js** : ambiente di runtime JavaScript
+- **Express.js** : framework per API REST
+- **JavaScript** : linguaggio di programmazione
+- **Cloudinary** : servizio di storage immagini
+- **Neo4j** : database a grafo
+- **Multer** : middleware per upload file
+- **Bcrypt** : hashing password
+- **JWT** : autenticazione tramite token
+- **dotenv** : gestione variabili d’ambiente
+- **cookie-parser** : gestione cookie
+- **cors** : gestione CORS
+- **axios** : richieste HTTP
+
 
 ### Database
 - **Neo4J** : A graph database relationships based
