@@ -4,11 +4,7 @@ Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e g
 
 ## Progresso del progetto
 
-[█████████████-] 90%
-<img src="https://github.com/Alexfinitore10/PressPortal/blob/main/ZKZg.gif" alt="PressPortal GIF" width="15"/>
-
-
-
+[█████████████] 100%!!
 
 
 ## Tecnologie Utilizzate
@@ -19,7 +15,7 @@ Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e g
 - **Tailwind CSS**: Framework di utilità per uno stile rapido e reattivo.
 - **Cypress** : A framework for E2E testing of the FrontEnd
 
-### Backend
+### Backend and DB
 - **Node.js** : ambiente di runtime JavaScript
 - **Express.js** : framework per API REST
 - **JavaScript** : linguaggio di programmazione
@@ -32,10 +28,6 @@ Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e g
 - **cookie-parser** : gestione cookie
 - **cors** : gestione CORS
 - **axios** : richieste HTTP
-
-
-### Database
-- **Neo4J** : A graph database relationships based
 
 ## Struttura del Progetto
 
@@ -56,7 +48,6 @@ StreetCats/
 ├── .eslintrc.cjs
 ├── .gitignore
 ├── README.md
-├── ZKZg.gif
 ├── cypress.config.js
 ├── index.html
 ├── package-lock.json
@@ -99,29 +90,30 @@ StreetCats/
    ```bash
    npm install
    ```
-3. **Configura le variabili d'ambiente**
+3. **Installa le dipendenze per il backend**
    
    Copia il file .env.example e rinominalo in .env. Poi, riempi i valori richiesti:
    ```bash
+   cd backend/
    cp .env.example .env
    ```
 ## Esecuzione
 1. **Avvia l'applicazione front end:**
-
+   Posizionati nella directory del frontend :
    ```bash
    npm run dev
    ```
    
-2. **Avvia l'applicazione back end:**
+3. **Avvia l'applicazione back end:**
 
    ```bash
    cd backend
    node server.js
    ```
-3. **Avvia il database**
-   - Avvia Neo4j
+4. **Avvia il database**
+   - Avvia Neo4j (versione Desktop o remoto)
    
-4. **Indirizzo di default**
+5. **Indirizzo di default**
 
    L'applicazione sarà accessibile all'indirizzo: [http://localhost:5173](http://localhost:5173)
 
