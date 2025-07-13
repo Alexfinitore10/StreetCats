@@ -60,7 +60,9 @@ StreetCats/
 ## Requisiti
 
 ### OS
-- Windows 10+ (non testato) / macOS 10+ (non testato) / Linux (Developed on ArchLinux kernel 6.15)
+- Windows 10+ (non testato)
+- macOS 10+ (non testato)
+- Linux (Developed on ArchLinux kernel 6.15)
 
 ### Package Managers
 - Node.js v14 o superiore
