@@ -27,7 +27,6 @@ Benvenuti in **StreetCats**, un'applicazione fullstack progettata per creare e g
 - **dotenv** : gestione variabili d’ambiente
 - **cookie-parser** : gestione cookie
 - **cors** : gestione CORS
-- **axios** : richieste HTTP
 
 ## Struttura del Progetto
 
