@@ -76,7 +76,7 @@ function ArticlePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-slate-900 to-slate-700">
-      <Navbar />
+    <Navbar />
       <div className="flex-1 w-full max-w-5xl px-4 flex flex-col items-center text-center py-12">
         <h1 className="text-5xl font-extrabold text-white drop-shadow mb-4">{article.title}</h1>
         <img
