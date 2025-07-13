@@ -148,6 +148,6 @@ SOFTWARE.
 
 Per qualsiasi domanda o suggerimento, puoi contattarci all'indirizzo email: [alexciacciarella@gmail.com](alexciacciarella@gmail.com).
 
-Grazie per il tuo interesse in PressPortal! Keep on keeping on!!<img src="https://ih1.redbubble.net/image.1384215121.0533/raf,750x1000,075,t,101010:01c5ca27c6.jpg" alt="PressPortal Logo" width="50" />
+Grazie per il tuo interesse in StreetCats! Keep on keeping on!!<img src="https://ih1.redbubble.net/image.1384215121.0533/raf,750x1000,075,t,101010:01c5ca27c6.jpg" alt="PressPortal Logo" width="50" />
 
 
