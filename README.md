@@ -89,7 +89,7 @@ StreetCats/
 
 2. **Installa le dipendenze per il front-end:**
    ```bash
-   npm install
+   npm i
    ```
 3. **Installa le dipendenze per il backend**
    
@@ -97,6 +97,7 @@ StreetCats/
    ```bash
    cd backend/
    cp .env.example .env
+   npm i
    ```
 ## Esecuzione
 1. **Avvia l'applicazione front end:**
